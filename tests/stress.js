@@ -1,8 +1,7 @@
-import http from 'k6/http';
-import { check, sleep } from 'k6';
-import { Trend } from 'k6/metrics';
+const k6 =  require('k6');
 
-export let options = {
+
+ let options = {
     vus: 10, // Número de usuários virtuais
     iterations: 100, // Número total de iterações
 };
@@ -14,9 +13,9 @@ let headers = {
     'Content-Type': 'application/json'
 };
 
-let responseTimeTrend = new Trend('response_time');
+let responseTimeTrend = new k6.Trend('response_time');
 
-export default function () {
+(function () {
     let body = JSON.stringify({
         orderProducts: [
             {
@@ -26,10 +25,10 @@ export default function () {
         ]
     });
 
-    let res = http.post(url, body, { headers: headers });
+    let res = k6.http.post(url, body, { headers: headers });
 
     // Checar se a resposta foi bem-sucedida
-    check(res, {
+    k6.check(res, {
         'is status 200': (r) => r.status === 200
     });
 
@@ -41,10 +40,10 @@ export default function () {
         let orderId = responseBody.orderId;
 
         let orderUrl = `${url}?orderId=${orderId}`;
-        let orderRes = http.get(orderUrl, { headers: headers });
+        let orderRes = k6.http.get(orderUrl, { headers: headers });
 
         // Checar se a resposta foi bem-sucedida
-        check(orderRes, {
+        k6.check(orderRes, {
             'is status 200': (r) => r.status === 200
         });
 
@@ -54,5 +53,5 @@ export default function () {
         console.log(orderRes.body);
     }
 
-    sleep(1); // Pausa de 1 segundo entre as iterações
-}
+    k6.sleep(1); // Pausa de 1 segundo entre as iterações
+})();

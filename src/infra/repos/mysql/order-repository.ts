@@ -1,7 +1,7 @@
 import { MySQLRepository, Not } from '@/infra/repos/mysql/repository'
 import { Order } from '@/domain/contracts/repos'
 import { EntityError } from '@/infra/errors'
-import { OrderStatus, PaymentStatus } from './entities'
+import { OrderStatus } from './entities'
 export class OrderRepository extends MySQLRepository implements Order {
 
   constructor(
@@ -207,25 +207,11 @@ export class OrderRepository extends MySQLRepository implements Order {
 
       if (!payment) throw new EntityError('Payment not found')
 
-      const { order } = payment ?? {}
-      let orderStatus
-
-      switch (paymentData.status) {
-        case PaymentStatus.CONCLUIDO:
-          orderStatus = OrderStatus.RECEBIDO
-          break
-        case PaymentStatus.CANCELADO:
-          orderStatus = OrderStatus.FINALIZADO
-          break
-        default:
-          orderStatus = ''
-          break
-      }
-
-      payment.status = paymentData.status
-      order.status = orderStatus
+      const paymentStatus = paymentData.status
+      payment.status = paymentStatus
+      payment.order.status = paymentStatus === 'Cancelado' ? 'Finalizado' : payment.order.status;
       await paymentRepo.save(payment)
-      await orderRepo.save(order)
+      await orderRepo.save(payment.order)
 
       return {
         paymentId: payment.paymentId,

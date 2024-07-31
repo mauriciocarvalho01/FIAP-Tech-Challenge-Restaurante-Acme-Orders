@@ -1,3 +1,4 @@
+import { PaymentService } from '@/domain/contracts/use-cases';
 import { Order } from "@/domain/contracts/repos"
 
 export namespace OrderHttp {
@@ -99,10 +100,7 @@ export namespace OrderHttp {
 
   export type CreateCheckoutOutput = { orderId: string, paymentId: string, status: string }
 
-  export type UpdatePaymentStatusInput = {
-    paymentId: string
-    status: string
-  }
+  export type UpdatePaymentStatusInput = PaymentService.PaymentWebhookInput
 
   export type UpdatePaymentStatusOutput = undefined | {
     status: string

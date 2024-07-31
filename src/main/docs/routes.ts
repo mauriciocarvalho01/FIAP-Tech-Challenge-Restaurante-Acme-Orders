@@ -134,9 +134,14 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"union","subSchemas":[{"dataType":"undefined"},{"dataType":"nestedObjectLiteral","nestedProperties":{"paymentId":{"dataType":"string","required":true},"status":{"dataType":"string","required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaymentService.PaymentWebhookInput": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"data":{"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"string","required":true}},"required":true},"action":{"dataType":"string","required":true},"api_version":{"dataType":"string","required":true},"user_id":{"dataType":"double","required":true},"date_created":{"dataType":"string","required":true},"type":{"dataType":"string","required":true},"live_mode":{"dataType":"boolean","required":true},"id":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "OrderHttp.UpdatePaymentStatusInput": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true},"paymentId":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"ref":"PaymentService.PaymentWebhookInput","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Register.InsertClientOutput": {
@@ -404,7 +409,6 @@ export function RegisterRoutes(app: express.Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/webhook',
-            authenticateMiddleware([{"apiKey":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UpdatePaymentStatusDoc)),
             ...(fetchMiddlewares<RequestHandler>(UpdatePaymentStatusDoc.prototype.UpdatePaymentStatus)),
 

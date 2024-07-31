@@ -56,23 +56,11 @@ export class OrderManager implements OrderService {
     return true;
   }
 
-  // Forma de pagamento: Pix
-  validatePaymentMethodRule (paymentMethod: string): boolean {
-    const paymentMethods = ['PIX']
-    return paymentMethods.includes(paymentMethod.toLocaleUpperCase())
-  }
 
    async saveOrder(orderData: Order.InsertOrderInput): Promise<Order.InsertOrderOutput> {
     if (!orderData.orderId) orderData.orderId = this.tokenHandler.generateUuid()
     const order = await this.orderRepo.saveOrder(orderData)
     if (order === undefined) throw new Error('Cant insert order')
-    return order
-  }
-
-  async savePayment(paymentData: Order.InsertPaymentInput): Promise<Order.InsertPaymentOutput> {
-    if (!paymentData.paymentId) paymentData.paymentId = this.tokenHandler.generateUuid()
-    const order = await this.orderRepo.savePayment(paymentData)
-    if (order === undefined) throw new Error('Cant insert payment')
     return order
   }
 

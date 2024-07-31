@@ -16,7 +16,7 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 60  # Meta de CPU em 6%
+          averageUtilization: 6  # Meta de CPU em 6%
     - type: Resource
       resource:
         name: memory
@@ -29,7 +29,7 @@ spec:
           name: rabbitmq_queue_messages
         target:
           type: Value
-          value: 10
+          value: "10"
   behavior:
     scaleUp:
       stabilizationWindowSeconds: 10

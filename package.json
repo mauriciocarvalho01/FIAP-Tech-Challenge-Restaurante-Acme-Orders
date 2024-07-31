@@ -33,7 +33,7 @@
     "test:coverage": "npm t -- --coverage",
     "test:integration": "npm t -- --config ./jest.integration.config.js",
     "test:coveralls": "npm run test:coverage && coveralls < coverage/lcov.info",
-    "test:k6": "k6 run --vus 100 --duration 30s ./tests/infra/api/load-test-metrics.js",
+    "test:k6": "node ./tests/stress.js",
     "docs": "npm run tsoa:routes && npm run tsoa:swagger",
     "tsoa:routes": "tsoa routes",
     "tsoa:swagger": "tsoa swagger",

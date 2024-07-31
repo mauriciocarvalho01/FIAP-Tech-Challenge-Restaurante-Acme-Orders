@@ -399,20 +399,57 @@
 				],
 				"type": "object"
 			},
-			"OrderHttp.UpdatePaymentStatusInput": {
+			"PaymentService.PaymentWebhookInput": {
 				"properties": {
-					"status": {
+					"data": {
+						"properties": {
+							"id": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"id"
+						],
+						"type": "object"
+					},
+					"action": {
 						"type": "string"
 					},
-					"paymentId": {
+					"api_version": {
 						"type": "string"
+					},
+					"user_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"date_created": {
+						"type": "string"
+					},
+					"type": {
+						"type": "string"
+					},
+					"live_mode": {
+						"type": "boolean"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
-					"status",
-					"paymentId"
+					"data",
+					"action",
+					"api_version",
+					"user_id",
+					"date_created",
+					"type",
+					"live_mode",
+					"id"
 				],
 				"type": "object"
+			},
+			"OrderHttp.UpdatePaymentStatusInput": {
+				"$ref": "#/components/schemas/PaymentService.PaymentWebhookInput"
 			},
 			"Register.InsertClientOutput": {
 				"properties": {
@@ -993,11 +1030,7 @@
 				"tags": [
 					"Payment"
 				],
-				"security": [
-					{
-						"apiKey": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,

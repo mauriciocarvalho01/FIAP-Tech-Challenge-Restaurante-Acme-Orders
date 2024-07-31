@@ -4,7 +4,7 @@ import { Order } from '@/domain/contracts/repos'
 import { PaymentGateway, TokenHandler } from '@/infra/gateways'
 import { Validator } from '@/application/validation'
 import { EntityError, TransactionError } from '@/infra/errors'
-import { OrderService } from '@/domain/contracts/use-cases/order-use-case'
+import { OrderService, PaymentService } from '@/domain/contracts/use-cases'
 import { OrderHttp } from '@/domain/contracts/gateways'
 import { OrderServiceError } from '@/domain/errors'
 
@@ -14,6 +14,7 @@ export class OrderController {
     private readonly registerRepo: RegisterRepository,
     private readonly orderRepo: OrderRepository,
     private readonly orderService: OrderService,
+    private readonly paymentService: PaymentService,
     private readonly paymentGateway: PaymentGateway
   ) { }
 
@@ -75,7 +76,7 @@ export class OrderController {
       orderEntity.client = client;
     }
 
-    orderEntity.status = '';
+    orderEntity.status = 'Recebido';
     paymentEntity.status = 'Pendente';
 
     orderEntity.payment = paymentEntity;
@@ -137,7 +138,7 @@ export class OrderController {
       }
       const orderInfo = this.orderService.calculateOrderValue(await this.orderRepo.findOrder({ orderId: order?.orderId ?? '' }))
       paymentEntity.totalPrice = orderInfo?.totalPrice
-      await this.orderService.savePayment(paymentEntity)
+      await this.paymentService.savePayment(paymentEntity)
 
       await this.orderRepo.commit()
 
@@ -242,7 +243,7 @@ export class OrderController {
 
       const orderInfo = this.orderService.calculateOrderValue(await this.orderRepo.findOrder({ orderId: order?.orderId ?? '' }))
       paymentEntity.totalPrice = orderInfo?.totalPrice
-      await this.orderService.savePayment(paymentEntity)
+      await this.paymentService.savePayment(paymentEntity)
 
       await this.orderRepo.commit()
 
@@ -361,7 +362,7 @@ export class OrderController {
       return badRequest(new Error('Cannot create checkout: orderId not found'));
     }
 
-    if (!this.orderService.validatePaymentMethodRule(paymentData.paymentMethod)) {
+    if (!this.paymentService.validatePaymentMethodRule(paymentData.paymentMethod)) {
       return badRequest(new Error(`Cant not create payment with paymentMethod ${paymentData.paymentMethod}`));
     }
 
@@ -391,7 +392,7 @@ export class OrderController {
 
       paymentEntity.status = 'Processando';
 
-      const savedPayment = await this.orderService.savePayment(Object.assign(paymentEntity, pixGenerated));
+      const savedPayment = await this.paymentService.savePayment(Object.assign(paymentEntity, pixGenerated));
 
       if (!savedPayment) {
         throw new TransactionError(new Error(`Payment with order ID ${order.orderId} not perform successfull transaction`))
@@ -430,20 +431,21 @@ export class OrderController {
   }
 
   // POST /webhook
-  async handleUpdatePaymentStatus(paymentData: OrderHttp.UpdatePaymentStatusInput): Promise<HttpResponse<OrderHttp.UpdatePaymentStatusOutput | Error>> {
+  async handleUpdatePaymentStatus(webhookPaymentData: OrderHttp.UpdatePaymentStatusInput): Promise<HttpResponse<OrderHttp.UpdatePaymentStatusOutput | Error>> {
     await this.orderRepo.prepareTransaction()
-
-    if (!paymentData.paymentId) {
-      return badRequest(new Error('Cannot update payment status: paymentId not found'));
-    }
-
-    if (!paymentData.status) {
-      return badRequest(new Error('Cannot update payment status: status not found'));
-    }
 
     await this.orderRepo.openTransaction()
 
     try {
+      const paymentData = this.paymentService.processPaymentWebhook(webhookPaymentData)
+
+      if (!paymentData.paymentId) {
+        return badRequest(new Error('Cannot update payment status: paymentId not found'));
+      }
+
+      if (!paymentData.status) {
+        return badRequest(new Error('Cannot update payment status: status not found'));
+      }
       const payment = await this.orderRepo.updatePaymentStatus(paymentData)
       await this.orderRepo.commit()
       return created(payment)

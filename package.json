@@ -18,7 +18,6 @@
     "name": "Mauricio Carvalho Pinheiro",
     "email": "developer.mauricio1@gmail.com"
   },
-  "type": "module",
   "scripts": {
     "start": "node -r dotenv/config dist/main",
     "dev": "npm run docs && ts-node-dev --respawn --transpile-only --clear -r dotenv/config --inspect=0.0.0.0:9229 src/main",

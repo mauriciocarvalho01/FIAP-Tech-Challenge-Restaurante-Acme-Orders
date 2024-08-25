@@ -66,7 +66,7 @@ export class CreateData1683634567892 implements MigrationInterface {
         ('${tokenHandler.generateUuid()}', 'Sal', 'Sal de cozinha', 0.1, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Acompanhamento')),
         -- Bacon
         ('${tokenHandler.generateUuid()}', 'Bacon', 'Bacon frito em cubos', 0.3, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Acompanhamento')),
-        -- Cheddar 
+        -- Cheddar
         ('${tokenHandler.generateUuid()}', 'Queijo Cheddar', 'Queijo cheddar muito saboroso', 0.3, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Acompanhamento')),
         -- Sorvete de Baunilha
         ('${tokenHandler.generateUuid()}', 'Calda de Baunilha', 'Calda sabor baunilha', 1.0, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Sobremesa')),

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { OrderEntity } from '@/infra/repos/mysql/entities';
 import { IsEnum, IsNumber, IsPositive, Min } from 'class-validator';
 

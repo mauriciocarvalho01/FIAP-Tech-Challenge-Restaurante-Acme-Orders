@@ -15,8 +15,8 @@
     "typeorm"
   ],
   "author": {
-    "name": "any",
-    "email": "any@any.com"
+    "name": "Mauricio Carvalho Pinheiro",
+    "email": "developer.mauricio1@gmail.com"
   },
   "scripts": {
     "start": "node -r dotenv/config dist/main",

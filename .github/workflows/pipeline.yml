@@ -13,6 +13,14 @@ jobs:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
+      - name: Log Git variables
+        run: |
+          echo "Branch Name: ${{ env.BRANCH_NAME }}"
+          echo "Short SHA: ${{ env.SHORT_SHA }}"
+          echo "AWS Region: ${{ secrets.AWS_REGION }}"
+          echo "AWS aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "AWS aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -108,7 +116,7 @@ jobs:
           SHORT_SHA=$(echo "${GITHUB_SHA::7}")
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
           echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
-          echo "${{secrets.AWS_ACCESS_KEY_ID}}"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:

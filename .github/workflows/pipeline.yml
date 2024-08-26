@@ -18,8 +18,8 @@ jobs:
           echo "Branch Name: ${{ env.BRANCH_NAME }}"
           echo "Short SHA: ${{ env.SHORT_SHA }}"
           echo "AWS Region: ${{ secrets.AWS_REGION }}"
-          echo "AWS aws-access-key-id: ${{ variables.AWS_ACCESS_KEY_ID }}"
-          echo "AWS aws-secret-access-key: ${{ variables.AWS_SECRET_ACCESS_KEY }}"
+          echo "AWS aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}"
+          echo "AWS aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}"
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -76,8 +76,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
@@ -120,8 +120,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ variables.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ variables.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Update kubeconfig for EKS cluster

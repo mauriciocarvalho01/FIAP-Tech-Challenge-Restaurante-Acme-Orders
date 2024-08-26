@@ -13,21 +13,19 @@ jobs:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
-      - name: Log Git variables
+      - name: Resolve vars
+        env:
+          TESTE: ${{secrets.AWS_ACCESS_KEY_ID}}
         run: |
-          echo "Branch Name: ${{ env.BRANCH_NAME }}"
-          echo "Short SHA: ${{ env.SHORT_SHA }}"
-          echo "AWS Region: ${{ secrets.AWS_REGION }}"
-          echo "AWS aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}"
-          echo "AWS aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}"
+          echo "$TESTE"
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install dependencies
         run: npm ci
@@ -44,12 +42,12 @@ jobs:
     needs: lint
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install dependencies
         run: npm ci
@@ -63,7 +61,7 @@ jobs:
     needs: test
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set Git variables
         id: vars
@@ -76,8 +74,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
@@ -107,7 +105,7 @@ jobs:
     needs: build_and_push_ecr
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set Git variables
         id: vars
@@ -120,8 +118,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Update kubeconfig for EKS cluster

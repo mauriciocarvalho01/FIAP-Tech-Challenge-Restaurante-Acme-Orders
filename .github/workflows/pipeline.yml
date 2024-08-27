@@ -82,11 +82,9 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          pwd
-          ls
           IMAGE_TAG=${{ env.IMAGE_TAG }}
           REPO_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}
-          docker build -t $REPO_URI:$IMAGE_TAG .
+          docker build -t $REPO_URI:$IMAGE_TAG ../.
 
       - name: Push Docker Image to ECR
         run: |

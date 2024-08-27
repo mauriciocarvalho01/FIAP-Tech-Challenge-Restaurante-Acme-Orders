@@ -80,6 +80,9 @@ jobs:
           aws ecr describe-repositories --repository-names "${{ env.IMAGE_NAME }}" || \
           aws ecr create-repository --repository-name "${{ env.IMAGE_NAME }}"
 
+      - name: List current directory contents
+        run: ls -la
+        
       - name: Build Docker Image
         run: |
           IMAGE_TAG=${{ env.IMAGE_TAG }}

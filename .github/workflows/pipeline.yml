@@ -37,7 +37,7 @@ jobs:
         run: npm run lint
 
       - name: Run Prettier Check and Write
-        run: npx prettier --check --w '\"**/*.{js,ts,json,md}\"'
+        run: npx prettier --check --w \"**/*.{js,ts,json,md}\"
 
 
   test:

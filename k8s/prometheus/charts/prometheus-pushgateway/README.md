@@ -5,14 +5,18 @@ This chart bootstraps a Prometheus [Pushgateway](http://github.com/prometheus/pu
 An optional prometheus `ServiceMonitor` can be enabled, should you wish to use this gateway with [Prometheus Operator](https://github.com/coreos/prometheus-operator).
 
 ## Get Repository Info
+
 <!-- textlint-disable terminology -->
+
 ```console
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
 
 _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation._
+
 <!-- textlint-enable -->
+
 ## Install Chart
 
 ```console

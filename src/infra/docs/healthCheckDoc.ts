@@ -1,4 +1,4 @@
-import { Route, Tags, Response, TsoaController, Get } from '.'
+import { Route, Tags, Response, TsoaController, Get } from '.';
 
 @Route('/healthcheck')
 export class HealthCheckDoc extends TsoaController {

@@ -1,5 +1,5 @@
 import { OrderHttp } from '@/domain/contracts/gateways';
-import { Route, Tags, Response, TsoaController, Get, Query, Security } from '.'
+import { Route, Tags, Response, TsoaController, Get, Query, Security } from '.';
 
 @Route('/product')
 export class FindProductDoc extends TsoaController {

@@ -5,7 +5,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
-  Column
+  Column,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { IsNotEmpty, Length, IsNumber, IsPositive, Min } from 'class-validator';
@@ -42,9 +42,13 @@ export class ProductEntity {
   @UpdateDateColumn({ name: 'data_atualizacao', type: 'timestamp' })
   updatedAt!: Date;
 
-  @OneToMany(() => OrderProductEntity, (orderProduct) => orderProduct.product, { cascade: true })
+  @OneToMany(() => OrderProductEntity, (orderProduct) => orderProduct.product, {
+    cascade: true,
+  })
   orderProducts!: OrderProductEntity[];
 
-  @ManyToOne(() => CategoryEntity, (category) => category.products, { onDelete: 'SET NULL' })
+  @ManyToOne(() => CategoryEntity, (category) => category.products, {
+    onDelete: 'SET NULL',
+  })
   category?: CategoryEntity;
 }

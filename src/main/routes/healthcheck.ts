@@ -1,5 +1,5 @@
 import { adaptExpressHealthcheckRoute as healthcheck } from '@/main/adapters';
-import { auth } from '@/main/middlewares'
+import { auth } from '@/main/middlewares';
 
 import { Router } from 'express';
 

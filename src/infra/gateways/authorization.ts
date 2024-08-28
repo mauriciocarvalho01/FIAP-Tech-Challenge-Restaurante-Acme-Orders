@@ -1,5 +1,3 @@
-
-
-export class Authorization  {
-    token!: string;
+export class Authorization {
+  token!: string;
 }

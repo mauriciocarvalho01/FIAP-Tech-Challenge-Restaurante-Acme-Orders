@@ -1,4 +1,10 @@
-import { MaxLength, IsNotEmpty, IsNumber, IsPositive, Min } from 'class-validator';
+import {
+  MaxLength,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  Min,
+} from 'class-validator';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -11,7 +17,6 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { IngredientProductEntity } from './ingredient-product';
 import { CategoryEntity } from './category';
-
 
 @Entity({ name: 'ingredientes' })
 export class IngredientEntity {
@@ -42,9 +47,15 @@ export class IngredientEntity {
   @UpdateDateColumn({ name: 'data_atualizacao', type: 'timestamp' })
   updatedAt!: Date;
 
-  @OneToMany(() => IngredientProductEntity, (ingredientProduct) => ingredientProduct.ingredient, { cascade: true })
+  @OneToMany(
+    () => IngredientProductEntity,
+    (ingredientProduct) => ingredientProduct.ingredient,
+    { cascade: true }
+  )
   ingredientProducts?: IngredientProductEntity[];
 
-  @ManyToOne(() => CategoryEntity, (category) => category.products, { onDelete: 'SET NULL' })
+  @ManyToOne(() => CategoryEntity, (category) => category.products, {
+    onDelete: 'SET NULL',
+  })
   category?: CategoryEntity;
 }

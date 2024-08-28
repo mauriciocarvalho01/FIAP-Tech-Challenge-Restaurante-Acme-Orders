@@ -1,5 +1,13 @@
-import { OrderRepository } from '@/infra/repos/mysql'
-import { OrderEntity, ProductEntity, OrderProductEntity, IngredientEntity, IngredientProductEntity, CategoryEntity, PaymentEntity } from '@/infra/repos/mysql/entities'
+import { OrderRepository } from '@/infra/repos/mysql';
+import {
+  OrderEntity,
+  ProductEntity,
+  OrderProductEntity,
+  IngredientEntity,
+  IngredientProductEntity,
+  CategoryEntity,
+  PaymentEntity,
+} from '@/infra/repos/mysql/entities';
 
 export const makeOrderRepo = (): OrderRepository => {
   return new OrderRepository(
@@ -10,5 +18,5 @@ export const makeOrderRepo = (): OrderRepository => {
     IngredientProductEntity,
     CategoryEntity,
     PaymentEntity
-  )
-}
+  );
+};

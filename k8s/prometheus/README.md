@@ -113,13 +113,13 @@ kubectl delete deploy,sts -l app.kubernetes.io/name=prometheus
 The Kubernetes labels have been updated to follow [Helm 3 label and annotation best practices](https://helm.sh/docs/chart_best_practices/labels/).
 Specifically, labels mapping is listed below:
 
-| OLD                | NEW                          |
-|--------------------|------------------------------|
-|heritage            | app.kubernetes.io/managed-by |
-|chart               | helm.sh/chart                |
-|[container version] | app.kubernetes.io/version    |
-|app                 | app.kubernetes.io/name       |
-|release             | app.kubernetes.io/instance   |
+| OLD                 | NEW                          |
+| ------------------- | ---------------------------- |
+| heritage            | app.kubernetes.io/managed-by |
+| chart               | helm.sh/chart                |
+| [container version] | app.kubernetes.io/version    |
+| app                 | app.kubernetes.io/name       |
+| release             | app.kubernetes.io/instance   |
 
 Therefore, depending on the way you've configured the chart, the previous StatefulSet or Deployment need to be deleted before upgrade.
 
@@ -240,25 +240,25 @@ Assuming you have an existing release of the prometheus chart, named `prometheus
 
 1. Update the `prometheus-old` release. Disable scraping on every component besides the prometheus server, similar to the configuration below:
 
-  ```yaml
-  alertmanager:
-    enabled: false
-  alertmanagerFiles:
-    alertmanager.yml: ""
-  kubeStateMetrics:
-    enabled: false
-  nodeExporter:
-    enabled: false
-  pushgateway:
-    enabled: false
-  server:
-    extraArgs:
-      storage.local.retention: 720h
-  serverFiles:
-    alerts: ""
-    prometheus.yml: ""
-    rules: ""
-  ```
+```yaml
+alertmanager:
+  enabled: false
+alertmanagerFiles:
+  alertmanager.yml: ''
+kubeStateMetrics:
+  enabled: false
+nodeExporter:
+  enabled: false
+pushgateway:
+  enabled: false
+server:
+  extraArgs:
+    storage.local.retention: 720h
+serverFiles:
+  alerts: ''
+  prometheus.yml: ''
+  rules: ''
+```
 
 1. Deploy a new release of the chart with version 5.0+ using prometheus 2.x. In the values.yaml set the scrape config as usual, and also add the `prometheus-old` instance as a remote-read target.
 
@@ -291,9 +291,9 @@ In order to get prometheus to scrape pods, you must add annotations to the pods 
 ```yaml
 metadata:
   annotations:
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: 'true'
     prometheus.io/path: /metrics
-    prometheus.io/port: "8080"
+    prometheus.io/port: '8080'
 ```
 
 You should adjust `prometheus.io/path` based on the URL that your pod serves metrics from. `prometheus.io/port` should be set to the port that your pod serves metrics from. Note that the values for `prometheus.io/scrape` and `prometheus.io/port` must be enclosed in double quotes.

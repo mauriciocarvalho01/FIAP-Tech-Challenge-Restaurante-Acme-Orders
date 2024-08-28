@@ -24,6 +24,7 @@ export default [
     ],
   },
   {
+    files: ["**/*.ts"],
     languageOptions: {
       ecmaVersion: 5,
       sourceType: "script",

@@ -36,8 +36,11 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      - name: Run Prettier Check and Write
-        run: npx prettier --check --w \"**/*.{js,ts,json,md}\"
+      - name: Run Prettier Check
+        run: npx prettier --check "**/*.{js,ts,json,md}"
+
+      - name: Run Prettier Write
+        run: npx prettier --write "**/*.{js,ts,json,md}"
 
 
   test:

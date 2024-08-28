@@ -3,14 +3,14 @@ kind: Deployment
 metadata:
   annotations:
     reloader.stakater.com/auto: "true"
-    secret.reloader.stakater.com/reload: "$K8S_APPLICATION_NAME"
-  namespace: $K8S_NAMESPACE
-  name: $K8S_APPLICATION_NAME
+    secret.reloader.stakater.com/reload: fiap/restaurante-acme
+  namespace: fiap
+  name: restaurante-acme
 spec:
-  replicas: $K8S_REPLICAS_COUNT_DEFAULT
+  replicas: 1
   selector:
     matchLabels:
-      app: $K8S_APPLICATION_NAME
+      app: restaurante-acme
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -19,53 +19,41 @@ spec:
   template:
     metadata:
       labels:
-        app: $K8S_APPLICATION_NAME
+        app: restaurante-acme
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: product
-                operator: In
-                values:
-                - $K8S_NAMESPACE
+      serviceAccountName: metrics-sa
       containers:
-        - name: $K8S_APPLICATION_NAME
-          image: $AWS_DOCKER_DOMAIN/$AWS_ORGANIZATION_NAME/$DOCKER_IMAGE_NAME:$GITHUB_COMMIT
+        - name: restaurante-acme
+          image: developer0101/tech-challenge:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8000
+            - containerPort: 4080
               protocol: TCP
           securityContext:
             runAsUser: 1000
-            runAsNonRoot: true
+            runAsNonRoot: false
             allowPrivilegeEscalation: false
           resources:
             requests:
-              memory: $K8S_REQUEST_MEMORY
-              cpu: $K8S_REQUEST_CPU
+              memory: "512Mi"
+              cpu: "512m"
             limits:
-              memory: $K8S_LIMIT_MEMORY
-              cpu: $K8S_LIMIT_CPU
+              memory: "512Mi"
+              cpu: "512m"
           envFrom:
-            - secretRef:
-                name: $K8S_APPLICATION_NAME-secrets
             - configMapRef:
-                name: $K8S_APPLICATION_NAME-vars
+                name: restaurante-acme-vars
           readinessProbe:
               httpGet:
                   path: /v1/api/healthcheck
-                  port: 8000
+                  port: 4080
               initialDelaySeconds: 0
               timeoutSeconds: 1
               periodSeconds: 10
           livenessProbe:
               httpGet:
                   path: /v1/api/healthcheck
-                  port: 8000
+                  port: 4080
               initialDelaySeconds: 0
               timeoutSeconds: 1
               periodSeconds: 10
-      imagePullSecrets:
-        - name: default-secret

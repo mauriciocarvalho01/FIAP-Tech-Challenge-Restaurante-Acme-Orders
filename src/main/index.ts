@@ -16,4 +16,3 @@ MySQLConnection.getInstance()
   .catch((error) => {
     logger.error(error.message);
   });
-

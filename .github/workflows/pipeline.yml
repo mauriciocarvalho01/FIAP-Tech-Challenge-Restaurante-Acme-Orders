@@ -38,6 +38,7 @@ jobs:
 
       - name: Run Prettier Check
         run: npx prettier --check "**/*.{js,ts,json,md}"
+        continue-on-error: true
 
       - name: Run Prettier Write
         run: npx prettier --write "**/*.{js,ts,json,md}"

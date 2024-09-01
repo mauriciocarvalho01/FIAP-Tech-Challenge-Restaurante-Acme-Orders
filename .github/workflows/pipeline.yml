@@ -42,8 +42,7 @@ jobs:
       - name: Run Prettier Write
         run: npx prettier --write "**/*.{js,ts,json,md}"
 
-
-  test:
+  tests:
     name: Run Tests
     runs-on: ubuntu-latest
     needs: lint
@@ -61,12 +60,29 @@ jobs:
         run: npm ci
 
       - name: Run Unit Tests
-        run: npm test -- --coverage
+        run: npm run test
+
+      - name: Run Coverage Tests
+        run: npm run test:coverage
+
+  sonarcloud_analysis:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@v3 # Ex: v2.1.0, See the latest version at https://github.com/marketplace/actions/sonarcloud-scan
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build_and_push_ecr:
     name: Build and Push Docker Image to ECR
     runs-on: ubuntu-latest
-    needs: test
+    needs: sonarcloud_analysis
     if: github.ref == 'refs/heads/release' || github.ref == 'refs/heads/main'
     env:
       AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
@@ -127,6 +143,7 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_EKS_CLUSTER_NAME: ${{ vars.AWS_EKS_CLUSTER_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -141,10 +158,10 @@ jobs:
 
       - name: Update kubeconfig for EKS cluster
         run: |
-          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+          aws eks update-kubeconfig --name ${{ env.AWS_EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
       - name: Set Kubernetes context to the EKS cluster
-        run: kubectl config use-context arn:aws:eks:${{ env.AWS_REGION }}:${{ env.AWS_ACCOUNT_ID }}:cluster/${{ env.EKS_CLUSTER_NAME }}
+        run: kubectl config use-context arn:aws:eks:${{ env.AWS_REGION }}:${{ env.AWS_ACCOUNT_ID }}:cluster/${{ env.AWS_EKS_CLUSTER_NAME }}
 
       - name: Deploy Kubernetes resources
         run: |

@@ -22,7 +22,8 @@ export class AuthenticationMiddleware implements Middleware {
     try {
       const checkIpAuthorization = env.checkIpAuthorization;
       if (checkIpAuthorization && !this.validateIp({ ip })) return forbidden();
-      if (!this.validateAuthorization({ authorization })) return forbidden();
+      const authorized = await this.validateAuthorization({ authorization })
+      if (!authorized) return forbidden();
       const authorize = this.tokenHandler.validate.bind(this.tokenHandler);
       const apiName = await authorize({ token: authorization! });
       return ok({ apiName });

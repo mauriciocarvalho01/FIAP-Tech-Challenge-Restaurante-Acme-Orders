@@ -1,9 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  Column
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
 
 import { OrderProductEntity } from './order-product'; // Importação da entidade OrderProductEntity
 import { IngredientEntity } from './ingredient'; // Importação da entidade IngredientEntity
@@ -19,9 +14,17 @@ export class IngredientProductEntity {
   @IsPositive({ message: 'A quantidade deve ser positivo' })
   count!: number;
 
-  @ManyToOne(() => OrderProductEntity, (orderProduct) => orderProduct.ingredientProducts, { onDelete: 'CASCADE' })
+  @ManyToOne(
+    () => OrderProductEntity,
+    (orderProduct) => orderProduct.ingredientProducts,
+    { onDelete: 'CASCADE' }
+  )
   orderProduct!: OrderProductEntity;
 
-  @ManyToOne(() => IngredientEntity, (ingredient) => ingredient.ingredientProducts, { onDelete: 'CASCADE' })
+  @ManyToOne(
+    () => IngredientEntity,
+    (ingredient) => ingredient.ingredientProducts,
+    { onDelete: 'CASCADE' }
+  )
   ingredient!: IngredientEntity;
 }

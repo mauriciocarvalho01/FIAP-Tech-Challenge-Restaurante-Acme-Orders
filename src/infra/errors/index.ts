@@ -1,1 +1,1 @@
-export * from './infra-errors'
+export * from './infra-errors';

@@ -1,5 +1,15 @@
 import { ClientHttp } from '@/domain/contracts/gateways';
-import { Route, Tags, Response, TsoaController, Get, Post, Body, Query, Security } from '.';
+import {
+  Route,
+  Tags,
+  Response,
+  TsoaController,
+  Get,
+  Post,
+  Body,
+  Query,
+  Security,
+} from '.';
 import { Example } from 'tsoa';
 
 @Route('/client')
@@ -9,9 +19,9 @@ export class CreateClientDoc extends TsoaController {
    */
   @Post()
   @Example({
-    "name": "Jhon Doe",
-    "cpf": "40730786700",
-    "email": "teste@outlook.com"
+    name: 'Jhon Doe',
+    cpf: '40730786700',
+    email: 'teste@outlook.com',
   })
   @Tags('Client')
   @Security('apiKey')

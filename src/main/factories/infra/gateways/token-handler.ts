@@ -1,6 +1,6 @@
-import { env } from '@/main/config/env'
-import { TokenHandler } from '@/infra/gateways'
+import { env } from '@/main/config/env';
+import { TokenHandler } from '@/infra/gateways';
 
 export const makeTokenHandler = (): TokenHandler => {
-  return new TokenHandler(env.apiAccessKey ?? '')
-}
+  return new TokenHandler(env.apiAccessKey ?? '');
+};

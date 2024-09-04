@@ -1,7 +1,7 @@
-import { PaymentService } from "@/domain/contracts/use-cases";
-import { TokenHandler } from "@/infra/gateways";
-import { OrderRepository } from "@/infra/repos/mysql";
-import { Order } from "@/domain/contracts/repos";
+import { PaymentService } from '@/domain/contracts/use-cases';
+import { TokenHandler } from '@/infra/gateways';
+import { OrderRepository } from '@/infra/repos/mysql';
+import { Order } from '@/domain/contracts/repos';
 
 // Classe PaymentManager para encapsular a lógica de negócios relacionada ao processamento de pagamentos
 export class PaymentManager implements PaymentService {
@@ -17,7 +17,7 @@ export class PaymentManager implements PaymentService {
   ): PaymentService.GenericType {
     const paymentData: PaymentService.GenericType = {
       paymentId: webhook.data.id,
-      status: webhook.action.includes("created") ? "Concluído" : "Cancelado",
+      status: webhook.action.includes('created') ? 'Concluído' : 'Cancelado',
     };
 
     // Aqui, você pode adicionar lógica adicional para definir outras propriedades da entidade PaymentEntity,
@@ -28,7 +28,7 @@ export class PaymentManager implements PaymentService {
 
   // Forma de pagamento: Pix
   validatePaymentMethodRule(paymentMethod: string): boolean {
-    const paymentMethods = ["PIX"];
+    const paymentMethods = ['PIX'];
     return paymentMethods.includes(paymentMethod.toLocaleUpperCase());
   }
 
@@ -38,7 +38,7 @@ export class PaymentManager implements PaymentService {
     if (!paymentData.paymentId)
       paymentData.paymentId = this.tokenHandler.generateUuid();
     const order = await this.orderRepo.savePayment(paymentData);
-    if (order === undefined) throw new Error("Cant insert payment");
+    if (order === undefined) throw new Error('Cant insert payment');
     return order;
   }
 }

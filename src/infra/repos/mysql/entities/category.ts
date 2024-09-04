@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  Column
+  Column,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,19 +16,22 @@ enum CategoriesNames {
   LANCHE = 'Lanche',
   ACOMPANHAMENTO = 'Acompanhamento',
   BEBIDA = 'Bebida',
-  Sobremesa = 'Sobremesa'
+  Sobremesa = 'Sobremesa',
 }
 @Entity({ name: 'categorias' })
 export class CategoryEntity {
   @PrimaryGeneratedColumn({ name: 'id' })
   id?: number;
-  
-  @Column({ name: 'categoria_id', unique: true,  default: uuidv4() })
+
+  @Column({ name: 'categoria_id', unique: true, default: uuidv4() })
   categoryId!: string;
- 
+
   @Column({ name: 'nome' })
   @IsNotEmpty({ message: 'O nome é obrigatório' })
-  @IsEnum(CategoriesNames, { message: "O nome da categoria deve ser 'Lanche', 'Acompanhamento', 'Bebida' ou 'Sobremesa'" })
+  @IsEnum(CategoriesNames, {
+    message:
+      "O nome da categoria deve ser 'Lanche', 'Acompanhamento', 'Bebida' ou 'Sobremesa'",
+  })
   @MaxLength(255, { message: 'O nome historico ter  no máximo 255 caracteres' })
   name!: string;
 
@@ -38,9 +41,13 @@ export class CategoryEntity {
   @UpdateDateColumn({ name: 'data_atualizacao', type: 'timestamp' })
   updatedAt!: Date;
 
-  @OneToMany(() => ProductEntity, (product) => product.category, { cascade: true })
+  @OneToMany(() => ProductEntity, (product) => product.category, {
+    cascade: true,
+  })
   products?: ProductEntity[];
 
-  @OneToMany(() => IngredientEntity, (ingredient) => ingredient.category, { cascade: true })
+  @OneToMany(() => IngredientEntity, (ingredient) => ingredient.category, {
+    cascade: true,
+  })
   ingredients?: IngredientEntity[];
 }

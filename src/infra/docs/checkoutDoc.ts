@@ -1,5 +1,15 @@
 import { OrderHttp } from '@/domain/contracts/gateways';
-import { Route, Tags, Response, TsoaController, Get, Post, Body, Query, Security } from '.'
+import {
+  Route,
+  Tags,
+  Response,
+  TsoaController,
+  Get,
+  Post,
+  Body,
+  Query,
+  Security,
+} from '.';
 import { Example } from 'tsoa';
 
 @Route('/checkout')
@@ -9,8 +19,8 @@ export class CreateCheckoutDoc extends TsoaController {
    */
   @Post()
   @Example({
-    "paymentMethod": "PIX",
-    "orderId": "0c76844d-3ec3-4ed6-8d61-1d415cf80c68"
+    paymentMethod: 'PIX',
+    orderId: '0c76844d-3ec3-4ed6-8d61-1d415cf80c68',
   })
   @Tags('Checkout')
   @Security('apiKey')

@@ -1,14 +1,17 @@
-import { Order } from "../repos"
+import { Order } from '../repos';
 
 export interface PaymentService {
-  processPaymentWebhook: (webhook: PaymentService.PaymentWebhookInput) => PaymentService.GenericType
-  validatePaymentMethodRule: (paymentMethod: string) => boolean
-  savePayment: (paymentData: Order.InsertPaymentInput) => Promise<Order.InsertPaymentOutput>
+  processPaymentWebhook: (
+    webhook: PaymentService.PaymentWebhookInput
+  ) => PaymentService.GenericType;
+  validatePaymentMethodRule: (paymentMethod: string) => boolean;
+  savePayment: (
+    paymentData: Order.InsertPaymentInput
+  ) => Promise<Order.InsertPaymentOutput>;
 }
 
 export namespace PaymentService {
-
-  export type GenericType<T = any> = T
+  export type GenericType<T = any> = T;
 
   export type PaymentWebhookInput = {
     id: number;
@@ -21,7 +24,5 @@ export namespace PaymentService {
     data: {
       id: string;
     };
-  }
+  };
 }
-
-

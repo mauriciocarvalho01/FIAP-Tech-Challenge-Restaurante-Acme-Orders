@@ -1,5 +1,5 @@
-import { Pagarme, PaymentGateway } from '@/infra/gateways'
+import { Pagarme, PaymentGateway } from '@/infra/gateways';
 
 export const paymentGateway = (): PaymentGateway => {
-  return new Pagarme()
-}
+  return new Pagarme();
+};

@@ -1,5 +1,5 @@
 import winston, { format, transports } from 'winston';
-import { env } from '@/main/config/env'
+import { env } from '@/main/config/env';
 
 class Logger {
   private logger: winston.Logger;
@@ -15,10 +15,7 @@ class Logger {
       ),
       transports: [
         new transports.Console({
-          format: format.combine(
-            format.colorize(),
-            format.simple()
-          ),
+          format: format.combine(format.colorize(), format.simple()),
         }),
       ],
     });
@@ -44,6 +41,5 @@ class Logger {
     this.logger.error(message);
   }
 }
- 
-export const logger =  new Logger(env.isProduction)
 
+export const logger = new Logger(env.isProduction);

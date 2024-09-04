@@ -1,18 +1,22 @@
 # Prometheus Node Exporter
 
-Prometheus exporter for hardware and OS metrics exposed by *NIX kernels, written in Go with pluggable metric collectors.
+Prometheus exporter for hardware and OS metrics exposed by \*NIX kernels, written in Go with pluggable metric collectors.
 
 This chart bootstraps a Prometheus [Node Exporter](http://github.com/prometheus/node_exporter) daemonset on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Get Repository Info
+
 <!-- textlint-disable terminology -->
+
 ```console
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
 
 _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation._
+
 <!-- textlint-enable -->
+
 ## Install Chart
 
 ```console
@@ -87,8 +91,8 @@ kind: ClusterRole
 metadata:
   name: prometheus-node-exporter-read
 rules:
-  - apiGroups: [ "" ]
-    resources: ["services/node-exporter-prometheus-node-exporter"]
+  - apiGroups: ['']
+    resources: ['services/node-exporter-prometheus-node-exporter']
     verbs:
       - get
 ```

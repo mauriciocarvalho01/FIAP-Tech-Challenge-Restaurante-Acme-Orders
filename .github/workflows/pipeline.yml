@@ -172,4 +172,9 @@ jobs:
       - name: Deploy Kubernetes resources
         run: |
           kubectl set image -f k8s/ --all "*=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
-          kubectl apply -f k8s/
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/metrics.yaml
+          kubectl apply -f k8s/config-map.yaml
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/hpa.yaml
+          kubectl apply -f k8s/service.yaml

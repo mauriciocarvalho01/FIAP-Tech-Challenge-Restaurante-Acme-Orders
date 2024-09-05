@@ -4,20 +4,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  Column
+  Column,
 } from 'typeorm';
 import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 import { IsCPF } from 'brazilian-class-validator';
 import { v4 as uuidv4 } from 'uuid';
 import { OrderEntity } from './order';
 
-
 @Entity({ name: 'clientes' })
 export class ClientEntity {
   @PrimaryGeneratedColumn({ name: 'id' })
   id?: number;
 
-  @Column({ name: 'cliente_id', unique: true,  default: uuidv4() })
+  @Column({ name: 'cliente_id', unique: true, default: uuidv4() })
   clientId!: string;
 
   @Column({ name: 'nome' })
@@ -30,7 +29,7 @@ export class ClientEntity {
   @IsCPF({ message: 'O número de cpf deve ser válido' })
   cpf!: string;
 
-  @Column({ name: 'email', unique: true  })
+  @Column({ name: 'email', unique: true })
   @IsNotEmpty({ message: 'O e-mail é obrigatório' })
   @IsEmail({}, { message: 'Deve ser um e-mail válido' })
   email!: string;
@@ -44,5 +43,3 @@ export class ClientEntity {
   @OneToMany(() => OrderEntity, (order) => order.client, { cascade: true })
   orders?: OrderEntity[];
 }
-
-

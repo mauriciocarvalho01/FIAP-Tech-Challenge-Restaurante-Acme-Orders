@@ -1,5 +1,5 @@
-import { TokenHandler } from "@/infra/gateways";
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { TokenHandler } from '@/infra/gateways';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateData1683634567892 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -41,7 +41,6 @@ export class CreateData1683634567892 implements MigrationInterface {
       ('${tokenHandler.generateUuid()}', 'Mousse de Maracujá', 'Taça de mousse de maracujá', 8.8, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Sobremesa'));
   `);
 
-
     // Ingredientes
     await queryRunner.query(`
       INSERT INTO ingredientes (ingrediente_id, nome, descricao, preco, data_cadastro, data_atualizacao, categoryId)
@@ -66,7 +65,7 @@ export class CreateData1683634567892 implements MigrationInterface {
         ('${tokenHandler.generateUuid()}', 'Sal', 'Sal de cozinha', 0.1, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Acompanhamento')),
         -- Bacon
         ('${tokenHandler.generateUuid()}', 'Bacon', 'Bacon frito em cubos', 0.3, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Acompanhamento')),
-        -- Cheddar 
+        -- Cheddar
         ('${tokenHandler.generateUuid()}', 'Queijo Cheddar', 'Queijo cheddar muito saboroso', 0.3, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Acompanhamento')),
         -- Sorvete de Baunilha
         ('${tokenHandler.generateUuid()}', 'Calda de Baunilha', 'Calda sabor baunilha', 1.0, NOW(), NOW(), (SELECT id FROM categorias WHERE nome = 'Sobremesa')),
@@ -81,7 +80,5 @@ export class CreateData1683634567892 implements MigrationInterface {
     `);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-
-  }
+  public async down(queryRunner: QueryRunner): Promise<void> {}
 }

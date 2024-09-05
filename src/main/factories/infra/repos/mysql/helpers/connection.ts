@@ -1,6 +1,6 @@
-import { MySQLConnection } from '@/infra/repos/mysql/helpers'
+import { MySQLConnection } from '@/infra/repos/mysql/helpers';
 
 export const makeMySQLConnection = (): MySQLConnection => {
-  const connection = MySQLConnection.getInstance()
-  return connection
-}
+  const connection = MySQLConnection.getInstance();
+  return connection;
+};

@@ -3,13 +3,16 @@
 Installs the [kube-state-metrics agent](https://github.com/kubernetes/kube-state-metrics).
 
 ## Get Repository Info
+
 <!-- textlint-disable -->
+
 ```console
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 ```
 
 _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation._
+
 <!-- textlint-enable -->
 
 ## Install Chart
@@ -53,9 +56,9 @@ v3.0.0 includes kube-state-metrics v2.0, see the [changelog](https://github.com/
 
 The upgraded chart now the following changes:
 
-* Dropped support for helm v2 (helm v3 or later is required)
-* collectors key was renamed to resources
-* namespace key was renamed to namespaces
+- Dropped support for helm v2 (helm v3 or later is required)
+- collectors key was renamed to resources
+- namespace key was renamed to namespaces
 
 ## Configuration
 
@@ -76,8 +79,8 @@ kind: ClusterRole
 metadata:
   name: kube-state-metrics-read
 rules:
-  - apiGroups: [ "" ]
-    resources: ["services/kube-state-metrics"]
+  - apiGroups: ['']
+    resources: ['services/kube-state-metrics']
     verbs:
       - get
 ```

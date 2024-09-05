@@ -1,9 +1,9 @@
-import { 
-  adaptExpressGetClientRoute as getClient, 
-  adaptExpressCreateClientRoute as createClient
+import {
+  adaptExpressGetClientRoute as getClient,
+  adaptExpressCreateClientRoute as createClient,
 } from '@/main/adapters';
 import { makeRegisterController } from '@/main/factories/application/controllers';
-import { auth } from '@/main/middlewares'
+import { auth } from '@/main/middlewares';
 
 import { Router } from 'express';
 

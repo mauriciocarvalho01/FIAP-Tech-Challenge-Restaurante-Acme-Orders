@@ -15,8 +15,8 @@
     "typeorm"
   ],
   "author": {
-    "name": "any",
-    "email": "any@any.com"
+    "name": "Mauricio Carvalho Pinheiro",
+    "email": "developer.mauricio1@gmail.com"
   },
   "scripts": {
     "start": "node -r dotenv/config dist/main",
@@ -40,6 +40,7 @@
     "typeorm:migrate": "typeorm migration:run"
   },
   "devDependencies": {
+    "@eslint/js": "^9.9.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
@@ -49,9 +50,15 @@
     "@types/node": "^20.12.8",
     "@types/swagger-ui-express": "^4.1.6",
     "@types/uuid": "^9.0.8",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0",
     "jest": "^29.7.0",
+    "prettier": "^3.3.3",
     "ts-jest": "^29.1.1",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "typescript-eslint": "^8.2.0"
   },
   "engines": {
     "node": "20.x"
@@ -67,6 +74,7 @@
     "husky": "^8.0.3",
     "jsonwebtoken": "^9.0.2",
     "k6": "^0.0.0",
+    "lint-staged": "^15.2.9",
     "module-alias": "^2.2.3",
     "mysql2": "^3.7.0",
     "reflect-metadata": "^0.2.1",

@@ -5,11 +5,15 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   ManyToOne,
-  Column
+  Column,
 } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { OrderProductEntity, ClientEntity, PaymentEntity } from '@/infra/repos/mysql/entities'
+import {
+  OrderProductEntity,
+  ClientEntity,
+  PaymentEntity,
+} from '@/infra/repos/mysql/entities';
 import { IsEnum, MaxLength } from 'class-validator';
 
 export enum OrderStatus {
@@ -29,10 +33,12 @@ export class OrderEntity {
   orderId!: string;
 
   @Column({ name: 'status', default: OrderStatus.INICIAL })
-  @IsEnum(OrderStatus, { message: "O status do pedido deve ser 'Recebido', 'Em Preparação', 'Pronto' ou 'Finalizado'" })
+  @IsEnum(OrderStatus, {
+    message:
+      "O status do pedido deve ser 'Recebido', 'Em Preparação', 'Pronto' ou 'Finalizado'",
+  })
   @MaxLength(255, { message: 'O status ter  no máximo 255 caracteres' })
   status!: string;
-
 
   @CreateDateColumn({ name: 'data_cadastro', type: 'timestamp' })
   createdAt!: Date;
@@ -40,10 +46,14 @@ export class OrderEntity {
   @UpdateDateColumn({ name: 'data_atualizacao', type: 'timestamp' })
   updatedAt!: Date;
 
-  @ManyToOne(() => ClientEntity, (client) => client.orders, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ClientEntity, (client) => client.orders, {
+    onDelete: 'CASCADE',
+  })
   client?: ClientEntity;
 
-  @OneToMany(() => OrderProductEntity, (orderProducts) => orderProducts.order, { cascade: true })
+  @OneToMany(() => OrderProductEntity, (orderProducts) => orderProducts.order, {
+    cascade: true,
+  })
   orderProducts?: OrderProductEntity[];
 
   @OneToMany(() => PaymentEntity, (payment) => payment.order, { cascade: true })

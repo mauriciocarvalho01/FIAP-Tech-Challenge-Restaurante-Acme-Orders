@@ -84,13 +84,13 @@ Enabling this option will cause custom metrics to be served at `/apis/custom.met
 ```yaml
 rules:
   custom:
-  - seriesQuery: '{__name__=~"^some_metric_count$"}'
-    resources:
-      template: <<.Resource>>
-    name:
-      matches: ""
-      as: "my_custom_metric"
-    metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+    - seriesQuery: '{__name__=~"^some_metric_count$"}'
+      resources:
+        template: <<.Resource>>
+      name:
+        matches: ''
+        as: 'my_custom_metric'
+      metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
 ```
 
 ### External Metrics
@@ -100,13 +100,13 @@ Enabling this option will cause external metrics to be served at `/apis/external
 ```yaml
 rules:
   external:
-  - seriesQuery: '{__name__=~"^some_metric_count$"}'
-    resources:
-      template: <<.Resource>>
-    name:
-      matches: ""
-      as: "my_external_metric"
-    metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+    - seriesQuery: '{__name__=~"^some_metric_count$"}'
+      resources:
+        template: <<.Resource>>
+      name:
+        matches: ''
+        as: 'my_external_metric'
+      metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
 ```
 
 ### Resource Metrics

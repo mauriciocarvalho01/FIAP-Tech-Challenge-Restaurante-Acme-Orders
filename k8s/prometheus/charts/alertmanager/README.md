@@ -1,6 +1,7 @@
 # Alertmanager
 
 As per [prometheus.io documentation](https://prometheus.io/docs/alerting/latest/alertmanager/):
+
 > The Alertmanager handles alerts sent by client applications such as the
 > Prometheus server. It takes care of deduplicating, grouping, and routing them
 > to the correct receiver integration such as email, PagerDuty, or OpsGenie. It

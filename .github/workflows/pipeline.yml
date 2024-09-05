@@ -20,7 +20,6 @@ jobs:
   lint:
     name: Lint Code
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,7 +46,6 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     needs: lint
-    if: startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -70,10 +68,10 @@ jobs:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
     needs: tests
+    if: startsWith(github.ref, 'refs/heads/release/') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     steps:
       - uses: actions/checkout@v4
         with:
-          # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
 
       - name: SonarCloud Scan
@@ -91,7 +89,7 @@ jobs:
     name: Build and Push Docker Image to ECR
     runs-on: ubuntu-latest
     needs: sonarcloud_analysis
-    if: github.ref == 'refs/heads/release/' || github.ref == 'refs/heads/main'
+    if: startsWith(github.ref, 'refs/heads/release/') || github.ref == 'refs/heads/main'
     env:
       AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -174,4 +172,9 @@ jobs:
       - name: Deploy Kubernetes resources
         run: |
           kubectl set image -f k8s/ --all "*=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
-          kubectl apply -f k8s/
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/metrics.yaml
+          kubectl apply -f k8s/config-map.yaml
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/hpa.yaml
+          kubectl apply -f k8s/service.yaml

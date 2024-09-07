@@ -166,14 +166,20 @@ jobs:
         run: |
           aws eks update-kubeconfig --name ${{ env.AWS_EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
+      - name: Ensure Namespace Exists
+        run: |
+          kubectl get namespace fiap || kubectl create namespace fiap
+
+      - name: Ensure Authorization Service Account Exists
+        run: |
+          kubectl apply -f k8s/metrics.yaml
+
       - name: Set Kubernetes context to the EKS cluster
         run: kubectl config use-context arn:aws:eks:${{ env.AWS_REGION }}:${{ env.AWS_ACCOUNT_ID }}:cluster/${{ env.AWS_EKS_CLUSTER_NAME }}
 
       - name: Deploy Kubernetes resources
         run: |
           kubectl set image -f k8s/ --all "*=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
-          kubectl apply -f k8s/namespace.yaml
-          kubectl apply -f k8s/metrics.yaml
           kubectl apply -f k8s/config-map.yaml
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/hpa.yaml

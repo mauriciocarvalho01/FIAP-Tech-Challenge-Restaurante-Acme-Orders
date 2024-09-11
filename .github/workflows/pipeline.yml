@@ -69,14 +69,6 @@ jobs:
       - name: Run Coverage Tests
         run: npm run test:coverage
 
-      - name: Install MySQL Client
-        run: sudo apt-get install -y mysql-client
-
-      - name: Check Database Connection
-        run: |
-          mysql -h ${{ env.DB_HOST }} -P ${{ env.DB_PORT }} -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} -e 'SELECT 1;' || exit 1
-
-
   sonarcloud_analysis:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest

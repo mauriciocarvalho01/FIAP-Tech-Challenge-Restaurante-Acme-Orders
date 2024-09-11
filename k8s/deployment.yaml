@@ -41,6 +41,8 @@ spec:
               memory: "512Mi"
               cpu: "512m"
           envFrom:
+            - secretRef:
+                name: restaurante-acme-secrets
             - configMapRef:
                 name: restaurante-acme-vars
           readinessProbe:

@@ -46,6 +46,11 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     needs: lint
+    env:
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -63,6 +68,14 @@ jobs:
 
       - name: Run Coverage Tests
         run: npm run test:coverage
+
+      - name: Install MySQL Client
+        run: sudo apt-get install -y mysql-client
+
+      - name: Check Database Connection
+        run: |
+          mysql -h ${{ env.DB_HOST }} -P ${{ env.DB_PORT }} -u ${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} -e 'SELECT 1;' || exit 1
+
 
   sonarcloud_analysis:
     name: SonarCloud Analysis

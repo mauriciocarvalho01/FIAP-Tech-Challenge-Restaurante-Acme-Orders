@@ -164,13 +164,13 @@ jobs:
 
       - name: Replace secrets in Kubernetes manifest with base64
         run: |
-          AWS_ACCESS_KEY_ID_ENCODED=$(echo -n "${{ env.AWS_ACCESS_KEY_ID }}" | base64)
-          AWS_SECRET_ACCESS_KEY_ENCODED=$(echo -n "${{ env.AWS_SECRET_ACCESS_KEY }}" | base64)
-          AWS_SESSION_TOKEN_ENCODED=$(echo -n "${{ env.AWS_SESSION_TOKEN }}" | base64)
+          AWS_ACCESS_KEY_ID_ENCODED=$(echo -n "${{ secrets.AWS_ACCESS_KEY_ID }}" | base64)
+          AWS_SECRET_ACCESS_KEY_ENCODED=$(echo -n "${{ secrets.AWS_SECRET_ACCESS_KEY }}" | base64)
+          AWS_SESSION_TOKEN_ENCODED=$(echo -n "${{ secrets.AWS_SESSION_TOKEN }}" | base64)
 
-          sed -i 's/{{AWS_ACCESS_KEY_ID}}/'"$AWS_ACCESS_KEY_ID_ENCODED"'/g' k8s/external-secrets.yaml
-          sed -i 's/{{AWS_SECRET_ACCESS_KEY}}/'"$AWS_SECRET_ACCESS_KEY_ENCODED"'/g' k8s/external-secrets.yaml
-          sed -i 's/{{AWS_SESSION_TOKEN}}/'"$AWS_SESSION_TOKEN_ENCODED"'/g' k8s/external-secrets.yaml
+          sed -i 's|{{AWS_ACCESS_KEY_ID}}|'"$AWS_ACCESS_KEY_ID_ENCODED"'|g' k8s/external-secrets.yaml
+          sed -i 's|{{AWS_SECRET_ACCESS_KEY}}|'"$AWS_SECRET_ACCESS_KEY_ENCODED"'|g' k8s/external-secrets.yaml
+          sed -i 's|{{AWS_SESSION_TOKEN}}|'"$AWS_SESSION_TOKEN_ENCODED"'|g' k8s/external-secrets.yaml
 
 
       - name: Update kubeconfig for EKS cluster

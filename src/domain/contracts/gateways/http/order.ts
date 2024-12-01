@@ -1,4 +1,3 @@
-import { PaymentService } from '@/domain/contracts/use-cases';
 import { Order } from '@/domain/contracts/repos';
 
 export namespace OrderHttp {
@@ -81,33 +80,4 @@ export namespace OrderHttp {
 
   // GET /categories
   export type GetCategoriesOutput = Order.FindCategoriesOutput;
-
-  // GET /checkout
-  export type GetPaymentInput = { paymentId: string };
-
-  export type GetPaymentOutput = Order.FindPaymentOutput;
-
-  // POST /checkout
-  export type CreateCheckoutInput = {
-    /**
-     * paymentMethod aceita somente 'PIX'
-     */
-    orderId: string;
-    paymentMethod: string;
-  };
-
-  export type CreateCheckoutOutput = {
-    orderId: string;
-    paymentId: string;
-    status: string;
-  };
-
-  export type UpdatePaymentStatusInput = PaymentService.PaymentWebhookInput;
-
-  export type UpdatePaymentStatusOutput =
-    | undefined
-    | {
-        status: string;
-        paymentId: string;
-      };
 }

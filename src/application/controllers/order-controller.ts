@@ -7,12 +7,11 @@ import {
   ok,
   serverError,
 } from '@/application/helpers';
-import { Order } from '@/domain/contracts/repos';
-import { PaymentGateway, TokenHandler } from '@/infra/gateways';
 import { Validator } from '@/application/validation';
 import { EntityError, TransactionError } from '@/infra/errors';
-import { OrderService, PaymentService } from '@/domain/contracts/use-cases';
+import { OrderService } from '@/domain/contracts/use-cases';
 import { OrderHttp } from '@/domain/contracts/gateways';
+import { MessageBroker } from '@/domain/contracts/message-broker';
 import { OrderServiceError } from '@/domain/errors';
 
 export class OrderController {
@@ -21,8 +20,7 @@ export class OrderController {
     private readonly registerRepo: RegisterRepository,
     private readonly orderRepo: OrderRepository,
     private readonly orderService: OrderService,
-    private readonly paymentService: PaymentService,
-    private readonly paymentGateway: PaymentGateway
+    private readonly messageBroker: MessageBroker
   ) {}
 
   // GET /orders
@@ -36,8 +34,7 @@ export class OrderController {
     } catch (error) {
       if (
         error instanceof OrderServiceError ||
-        error instanceof EntityError ||
-        error instanceof TransactionError
+        error instanceof EntityError
       ) {
         return badRequest(new Error(error.message));
       }
@@ -58,8 +55,7 @@ export class OrderController {
     } catch (error) {
       if (
         error instanceof OrderServiceError ||
-        error instanceof EntityError ||
-        error instanceof TransactionError
+        error instanceof EntityError
       ) {
         return badRequest(new Error(error.message));
       }
@@ -70,7 +66,7 @@ export class OrderController {
   // POST /order
   async handleCreateOrder(
     orderData: OrderHttp.CreateOrderInput
-  ): Promise<HttpResponse<OrderHttp.CreateOrderOutput | Error>> {
+  ): Promise<HttpResponse<OrderHttp.CreateOrderOutput | Error | void>> {
     await this.orderRepo.prepareTransaction();
 
     // Verificação básica para garantir que temos produtos para criar o pedido
@@ -83,9 +79,6 @@ export class OrderController {
     // Cria a entidade de pedido
     const orderEntity = this.orderRepo.getOrderEntity();
 
-    // Cria a entidade de pagamento
-    const paymentEntity = this.orderRepo.getPaymentEntity();
-
     // Configura o relacionamento entre cliente e pedido
     const client = await this.registerRepo.findClientById({
       clientId: orderData.clientId,
@@ -96,12 +89,9 @@ export class OrderController {
       orderEntity.client = client;
     }
 
+
     orderEntity.status = 'Recebido';
-    paymentEntity.status = 'Pendente';
 
-    orderEntity.payment = paymentEntity;
-
-    // Valida o pedido antes de salvar
     const errors = await this.validator.validate(orderEntity);
     if (errors.length !== 0) {
       return badRequest(new Error(JSON.stringify(errors)));
@@ -110,8 +100,16 @@ export class OrderController {
     await this.orderRepo.openTransaction();
 
     try {
+
       const order = await this.orderService.saveOrder(orderEntity);
-      paymentEntity.order = order;
+
+      if (order === undefined) {
+        throw new TransactionError(
+          new Error(
+            'Cannot save order'
+          )
+        );
+      }
 
       // Processa os produtos associados ao pedido
       for (const orderProductData of orderData.orderProducts) {
@@ -188,16 +186,35 @@ export class OrderController {
           }
         }
       }
-      const orderInfo = this.orderService.calculateOrderValue(
-        await this.orderRepo.findOrder({ orderId: order?.orderId ?? '' })
-      );
-      paymentEntity.totalPrice = orderInfo?.totalPrice;
-      await this.paymentService.savePayment(paymentEntity);
 
       await this.orderRepo.commit();
 
-      return created({ orderId: order!.orderId, status: order!.status });
+      return  await this.handleGetOrder({ orderId: order.orderId })
+      .then(async ({ data }) => {
+
+        if ((data instanceof  Error) || data === undefined) return badRequest(new Error(`Order ${order.orderId} not found`))
+
+        const paymentChannel = this.messageBroker.getChannel('payment')
+        await this.messageBroker.sendToQueue(
+          paymentChannel,
+          {
+            queueName: 'payment',
+            message: {
+              paymentMethod: 'Pix',
+              order: {
+                orderId: data.orderId,
+                status: data.status,
+                totalValue: data.totalPrice,
+                clientId: data.client?.clientId
+              }
+            }
+          }
+        )
+        return created({ orderId: order.orderId, status: order.status });
+      }).catch(() => badRequest(new Error(`Order ${order.orderId} not found`)))
+
     } catch (error) {
+      console.log(error)
       if (error instanceof TransactionError) {
         await this.orderRepo.rollback();
       }
@@ -242,17 +259,13 @@ export class OrderController {
         orderId: orderData.orderId,
       });
 
-      // Cria a entidade de pagamento com base no ultimo pagamento
-      const paymentEntity = Object.assign(
-        this.orderRepo.getPaymentEntity(),
-        order?.payments[order?.payments.length - 1]
-      );
-
       if (!order) {
         return badRequest(
           new Error(`Order with ID ${orderData.orderId} not found`)
         );
       }
+
+      console.log(order)
 
       if (!this.orderService.validateOrderStatusRule(order)) {
         return badRequest(
@@ -336,16 +349,34 @@ export class OrderController {
         }
       }
 
-      const orderInfo = this.orderService.calculateOrderValue(
-        await this.orderRepo.findOrder({ orderId: order?.orderId ?? '' })
-      );
-      paymentEntity.totalPrice = orderInfo?.totalPrice;
-      await this.paymentService.savePayment(paymentEntity);
-
       await this.orderRepo.commit();
 
-      return ok({ orderId: order?.orderId, status: order.status });
+      return  await this.handleGetOrder({ orderId: order.orderId })
+      .then(async ({ data }) => {
+
+        if ((data instanceof  Error) || data === undefined) return badRequest(new Error(`Order ${order.orderId} not found`))
+
+        const paymentChannel = this.messageBroker.getChannel('payment')
+        await this.messageBroker.sendToQueue(
+          paymentChannel,
+          {
+            queueName: 'payment',
+            message: {
+              paymentMethod: 'Pix',
+              order: {
+                orderId: data.orderId,
+                status: data.status,
+                totalValue: data.totalPrice,
+                clientId: data.client?.clientId
+              }
+            }
+          }
+        )
+        return ok({ orderId: order?.orderId, status: order.status });
+      }).catch(() => badRequest(new Error(`Order ${order.orderId} not found`)))
+
     } catch (error) {
+      console.log(error)
       if (error instanceof TransactionError) {
         await this.orderRepo.rollback();
       }
@@ -368,14 +399,11 @@ export class OrderController {
   async handleUpdateOrderStatus(
     orderData: OrderHttp.UpdateOrderStatusInput
   ): Promise<HttpResponse<OrderHttp.UpdateOrderStatusOutput | Error>> {
-    await this.orderRepo.prepareTransaction();
 
     // Verificação básica para garantir que temos orderId para alterar o pedido
     if (!orderData.orderId) {
       return badRequest(new Error('Cannot update order: orderId not found'));
     }
-
-    await this.orderRepo.openTransaction();
 
     try {
       // Cria a entidade de pedido
@@ -404,7 +432,7 @@ export class OrderController {
       if (!this.orderService.validateOrderStatusRule(order, orderData.status)) {
         return badRequest(
           new Error(
-            `Cant not update order status with ID ${orderData.orderId}, order status ${order.status}, payment status ${order.payments[0]?.status}`
+            `Cant not update order status with ID ${orderData.orderId}, order status ${order.status}`
           )
         );
       }
@@ -412,25 +440,17 @@ export class OrderController {
       // Altera a entidade de pedido
       await this.orderService.saveOrder(Object.assign(order, orderEntity));
 
-      await this.orderRepo.commit();
 
-      return ok({ orderId: order!.orderId, status: order!.status });
+      return ok({ orderId: order.orderId, status: order.status });
     } catch (error) {
-      if (error instanceof TransactionError) {
-        await this.orderRepo.rollback();
-      }
-
       if (
         error instanceof OrderServiceError ||
-        error instanceof EntityError ||
-        error instanceof TransactionError
+        error instanceof EntityError
       ) {
         return badRequest(new Error(error.message));
       }
 
       return serverError(error);
-    } finally {
-      await this.orderRepo.closeTransaction();
     }
   }
 
@@ -446,176 +466,6 @@ export class OrderController {
       return ok(order);
     } catch (error) {
       return serverError(error);
-    }
-  }
-
-  // GET /checkout
-  async handleGetCheckout({
-    paymentId,
-  }: OrderHttp.GetPaymentInput): Promise<
-    HttpResponse<OrderHttp.GetPaymentOutput | Error>
-  > {
-    try {
-      const payment = await this.orderRepo.findPayment({ paymentId });
-      if (payment === undefined) return notFound();
-      return ok(payment);
-    } catch (error) {
-      return serverError(error);
-    }
-  }
-
-  // POST /checkout
-  async handleCreateCheckout(
-    paymentData: OrderHttp.CreateCheckoutInput
-  ): Promise<HttpResponse<OrderHttp.CreateCheckoutOutput | Error>> {
-    await this.orderRepo.prepareTransaction();
-
-    // Verificação básica para garantir os dados do checkout
-    if (!paymentData.paymentMethod || !paymentData.orderId) {
-      return badRequest(
-        new Error('Cannot create checkout: paymentMethod not found')
-      );
-    }
-
-    if (!paymentData.orderId) {
-      return badRequest(new Error('Cannot create checkout: orderId not found'));
-    }
-
-    if (
-      !this.paymentService.validatePaymentMethodRule(paymentData.paymentMethod)
-    ) {
-      return badRequest(
-        new Error(
-          `Cant not create payment with paymentMethod ${paymentData.paymentMethod}`
-        )
-      );
-    }
-
-    await this.orderRepo.openTransaction();
-
-    try {
-      // Busca a entidade de pedido
-      const order = this.orderService.calculateOrderValue(
-        await this.orderRepo.findOrder({ orderId: paymentData.orderId })
-      );
-
-      if (!order) {
-        return badRequest(
-          new Error(`Order with ID ${paymentData.orderId} not found`)
-        );
-      }
-      // Cria a entidade de pagamento com base no ultimo pagamento
-      const payment = order.payments[order.payments.length - 1];
-      const paymentEntity = Object.assign(
-        this.orderRepo.getPaymentEntity(),
-        payment
-      );
-
-      paymentEntity.totalPrice = order.totalPrice;
-      paymentEntity.order = order;
-
-      const pixGenerated = await this.paymentGateway.pixGenerate(order);
-
-      if (!pixGenerated) {
-        throw new TransactionError(
-          new Error(
-            `Payment with order ID ${order.orderId} not perform successfull transaction`
-          )
-        );
-      }
-
-      paymentEntity.status = 'Processando';
-
-      const savedPayment = await this.paymentService.savePayment(
-        Object.assign(paymentEntity, pixGenerated)
-      );
-
-      if (!savedPayment) {
-        throw new TransactionError(
-          new Error(
-            `Payment with order ID ${order.orderId} not perform successfull transaction`
-          )
-        );
-      }
-
-      order.status = 'Recebido';
-
-      // Altera status da entidade de pedido
-      const orderEntity = this.orderRepo.getOrderEntity();
-      orderEntity.id = order.id;
-      orderEntity.orderId = order.orderId;
-      orderEntity.status = 'Recebido';
-      orderEntity.payments = [paymentEntity];
-      await this.orderService.saveOrder(orderEntity);
-
-      await this.orderRepo.commit();
-
-      return created({
-        orderId: order?.orderId,
-        status: savedPayment?.status,
-        paymentId: savedPayment.paymentId,
-      });
-    } catch (error) {
-      if (error instanceof TransactionError) {
-        await this.orderRepo.rollback();
-      }
-
-      if (
-        error instanceof OrderServiceError ||
-        error instanceof EntityError ||
-        error instanceof TransactionError
-      ) {
-        return badRequest(new Error(error.message));
-      }
-
-      return serverError(error);
-    } finally {
-      await this.orderRepo.closeTransaction();
-    }
-  }
-
-  // POST /webhook
-  async handleUpdatePaymentStatus(
-    webhookPaymentData: OrderHttp.UpdatePaymentStatusInput
-  ): Promise<HttpResponse<OrderHttp.UpdatePaymentStatusOutput | Error>> {
-    await this.orderRepo.prepareTransaction();
-
-    await this.orderRepo.openTransaction();
-
-    try {
-      const paymentData =
-        this.paymentService.processPaymentWebhook(webhookPaymentData);
-
-      if (!paymentData.paymentId) {
-        return badRequest(
-          new Error('Cannot update payment status: paymentId not found')
-        );
-      }
-
-      if (!paymentData.status) {
-        return badRequest(
-          new Error('Cannot update payment status: status not found')
-        );
-      }
-      const payment = await this.orderRepo.updatePaymentStatus(paymentData);
-      await this.orderRepo.commit();
-      return created(payment);
-    } catch (error) {
-      if (error instanceof TransactionError) {
-        await this.orderRepo.rollback();
-      }
-
-      if (
-        error instanceof OrderServiceError ||
-        error instanceof EntityError ||
-        error instanceof TransactionError
-      ) {
-        return badRequest(new Error(error.message));
-      }
-
-      return serverError(error);
-    } finally {
-      await this.orderRepo.closeTransaction();
     }
   }
 }

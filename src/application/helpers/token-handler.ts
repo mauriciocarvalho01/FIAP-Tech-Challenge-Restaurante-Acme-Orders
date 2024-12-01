@@ -1,5 +1,5 @@
+import { Authorization } from '@/application/helpers';
 import { TokenValidator } from '@/domain/contracts/gateways';
-import { Authorization } from '@/infra/gateways';
 
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
@@ -19,9 +19,11 @@ export class TokenHandler implements TokenValidator {
     return await bcrypt.hash(data, await bcrypt.genSalt());
   }
 
-  generateUuid = () => uuidv4();
+  generateUuid(): string {
+    return uuidv4();
+  }
 
-  authorization = () => {
-    return new Authorization();
+  authorization(): Authorization {
+    return new Authorization()
   };
 }

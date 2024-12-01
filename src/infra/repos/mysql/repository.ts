@@ -1,7 +1,7 @@
 import { MySQLConnection } from '@/infra/repos/mysql/helpers';
 
 import { ObjectLiteral, ObjectType, Repository } from 'typeorm';
-export { Not } from 'typeorm';
+export { Not, Entity } from 'typeorm';
 
 export abstract class MySQLRepository {
   constructor(

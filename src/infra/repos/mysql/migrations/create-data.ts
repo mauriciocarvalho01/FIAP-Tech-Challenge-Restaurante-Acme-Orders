@@ -1,9 +1,9 @@
-import { TokenHandler } from '@/infra/gateways';
+import { TokenHandler } from '@/application/helpers';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateData1683634567892 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const tokenHandler = new TokenHandler();
+    const tokenHandler = new TokenHandler()
     // Categorias
     await queryRunner.query(`
       INSERT INTO categorias (categoria_id, nome, data_cadastro, data_atualizacao)

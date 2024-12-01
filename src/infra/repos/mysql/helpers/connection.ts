@@ -19,18 +19,22 @@ export class MySQLConnection {
   private queryRunner: QueryRunner | undefined;
 
   private constructor() {
-    this.dataSource = new DataSource({
-      type: 'mysql',
-      ...env.database.mysql,
-      entities: [
-        `${process.cwd()}/${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/repos/mysql/entities/index.{js,ts}`,
-      ],
-      migrations: [
-        `${process.cwd()}/${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/repos/mysql/migrations/index.{js,ts}`,
-      ],
-      logging: false,
-      synchronize: true,
-    });
+    try{
+      this.dataSource = new DataSource({
+        type: 'mysql',
+        ...env.database.mysql,
+        entities: [
+          `${process.cwd()}/${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/repos/mysql/entities/index.{js,ts}`,
+        ],
+        migrations: [
+          `${process.cwd()}/${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'}/infra/repos/mysql/migrations/index.{js,ts}`,
+        ],
+        logging: ["error", "warn"],
+        synchronize: true,
+      });
+    } catch(error) {
+      throw new ConnectionNotFoundError();
+    }
   }
 
   public static getInstance(): MySQLConnection {
@@ -40,8 +44,16 @@ export class MySQLConnection {
     return MySQLConnection.instance;
   }
 
-  public async initialize(): Promise<void> {
+  public getDatasource(): DataSource {
     if (this.dataSource) {
+      return this.dataSource;
+    } else {
+      throw new ConnectionNotFoundError();
+    }
+  }
+
+  public async initialize(): Promise<void> {
+    if (this.getDatasource()) {
       await this.dataSource.initialize();
       await this.dataSource.runMigrations();
       logger.success('MySQL Connection has already been created');
@@ -100,7 +112,7 @@ export class MySQLConnection {
   }
 
   public async disconnect(): Promise<void> {
-    if (this.dataSource) {
+    if (this.getDatasource()) {
       await this.dataSource.destroy();
       logger.warn('Disconnected from MySQL');
     } else {

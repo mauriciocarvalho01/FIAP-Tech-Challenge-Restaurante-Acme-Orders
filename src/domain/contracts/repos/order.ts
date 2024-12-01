@@ -6,9 +6,6 @@ export interface Order {
   saveOrder: (
     input: Order.InsertOrderInput
   ) => Promise<Order.InsertOrderOutput>;
-  savePayment: (
-    input: Order.InsertPaymentInput
-  ) => Promise<Order.InsertPaymentOutput>;
   saveOrderProduct: (
     input: Order.InsertOrderProductInput
   ) => Promise<Order.InsertOrderProductOutput>;
@@ -51,7 +48,6 @@ export namespace Order {
         id: number;
         orderId: string;
         status: string;
-        payments: FindPaymentOutput[];
         createdAt: string;
         client?: Register.FindClientOutput;
         orderProducts: OrderProductOutput[];
@@ -87,7 +83,6 @@ export namespace Order {
     orderId: string;
     clientId?: string;
     client?: GenericType;
-    payment: GenericType;
     orderProducts: GenericType[];
   };
 
@@ -112,7 +107,7 @@ export namespace Order {
   export type FindProductOutput =
     | undefined
     | {
-        id: string;
+        id: number;
         productId: string;
         name: string;
         description: string;
@@ -180,7 +175,7 @@ export namespace Order {
   export type FindIngredientOutput =
     | undefined
     | {
-        id: string;
+        id: number;
         ingredientId: string;
         name: string;
         description: string;
@@ -208,56 +203,5 @@ export namespace Order {
         ingredientId: string;
         orderProductId: string;
         affected: number | null | undefined;
-      };
-
-  // Payment properties
-  export type FindPaymentInput = { paymentId: string };
-
-  export type InsertPaymentInput = {
-    paymentId: string;
-    totalPrice: number;
-    paymentMethod: string;
-    status: string;
-    order: GenericType;
-  };
-
-  export type FindPaymentOutput =
-    | undefined
-    | {
-        id: number;
-        paymentId: string;
-        totalPrice: number;
-        paymentMethod: string;
-        status: string;
-        pixUrl: string;
-        pixCode: string;
-        expirationDate: Date;
-        order: GenericType;
-      };
-
-  export type InsertPaymentOutput =
-    | undefined
-    | {
-        id: number;
-        status: string;
-        paymentId: string;
-        totalPrice: number;
-      };
-
-  export type CreatePaymentInput = {
-    orderId: string;
-    paymentMethod: string;
-  };
-
-  export type UpdatePaymentStatusInput = {
-    paymentId: string;
-    status: string;
-  };
-
-  export type UpdatePaymentStatusOutput =
-    | undefined
-    | {
-        status: string;
-        paymentId: string;
       };
 }

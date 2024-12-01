@@ -149,27 +149,3 @@ export class FindAllOrdersDoc extends TsoaController {
   }
 }
 
-@Route('/webhook')
-export class UpdatePaymentStatusDoc extends TsoaController {
-  /**
-   * @summary Rota para atualizar o status do pagamento
-   */
-  @Post()
-  @Example({
-    id: 12345,
-    live_mode: true,
-    type: 'payment',
-    date_created: '2015-03-25T10:04:58.396-04:00',
-    user_id: 44444,
-    api_version: 'v1',
-    action: 'payment.created',
-    data: {
-      id: 'ecf24931-1486-49a2-9a64-8a623aecffc4',
-    },
-  })
-  @Tags('Payment')
-  @Response<OrderHttp.UpdatePaymentStatusOutput>(200, 'Ok')
-  UpdatePaymentStatus(@Body() _body: OrderHttp.UpdatePaymentStatusInput): void {
-    /* Documentation - Rout to update payment status */
-  }
-}

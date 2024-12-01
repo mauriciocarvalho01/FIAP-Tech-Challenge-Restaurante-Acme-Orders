@@ -1,5 +1,6 @@
 import { RegisterRepository } from '@/infra/repos/mysql';
 import {
+  TokenHandler,
   badRequest,
   created,
   HttpResponse,
@@ -8,7 +9,6 @@ import {
   serverError,
 } from '@/application/helpers';
 import { Register } from '@/domain/contracts/repos';
-import { TokenHandler } from '@/infra/gateways';
 import { EntityError } from '@/infra/errors';
 import { Validator } from '@/application/validation';
 
@@ -31,6 +31,12 @@ export class RegisterController {
     httpRequest: Register.InsertClientInput
   ): Promise<HttpResponse> {
     const clientEntity = this.registerRepo.getClientEntity();
+
+    // Garantir que clientEntity seja um objeto antes de usar Object.assign
+    if (!clientEntity) {
+      return badRequest(new Error('Client entity is undefined'));
+    }
+
     const errors = await this.validator.validate(
       Object.assign(clientEntity, httpRequest)
     );

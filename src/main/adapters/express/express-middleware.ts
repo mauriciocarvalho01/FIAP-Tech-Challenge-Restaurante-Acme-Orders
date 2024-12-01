@@ -29,4 +29,4 @@ export const adaptExpressHealthcheckRoute: AdapterHealthcheck =
   () => async (_, res) => {
     const json = { ok: true };
     res.status(200).json(json);
-  };
+};

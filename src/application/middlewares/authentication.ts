@@ -1,13 +1,13 @@
-import { forbidden, HttpResponse, ok } from '@/application/helpers';
+import { TokenHandler, forbidden, HttpResponse, ok } from '@/application/helpers';
 import { Middleware } from '@/application/middlewares';
 import { env } from '@/main/config/env';
 import { logger } from '@/infra/helpers';
 import { Validator } from '@/application/validation';
-import { TokenHandler } from '@/infra/gateways';
 
 type HttpRequest = { authorization?: string; ip?: string };
-type AuthorizationRequest = { authorization?: string; ip?: string };
+type AuthorizationRequest = { authorization: string };
 type Model = Error | { apiName: string };
+type GenericError<T = any> = T
 
 export class AuthenticationMiddleware implements Middleware {
   constructor(
@@ -20,15 +20,15 @@ export class AuthenticationMiddleware implements Middleware {
     ip,
   }: HttpRequest): Promise<HttpResponse<Model>> {
     try {
-      const checkIpAuthorization = env.checkIpAuthorization;
-      if (checkIpAuthorization && !this.validateIp({ ip })) return forbidden();
+      if (authorization === undefined) return forbidden();
+      if (!this.validateIp({ ip })) return forbidden();
       const authorized = await this.validateAuthorization({ authorization })
       if (!authorized) return forbidden();
       const authorize = this.tokenHandler.validate.bind(this.tokenHandler);
-      const apiName = await authorize({ token: authorization! });
+      const apiName = await authorize({ token: authorization });
       return ok({ apiName });
-    } catch (error) {
-      logger.warn(error instanceof Error ? error.message : 'unknown error');
+    } catch (error: GenericError) {
+      logger.warn(error.message);
       return forbidden();
     }
   }
@@ -43,9 +43,10 @@ export class AuthenticationMiddleware implements Middleware {
     return false;
   }
 
+
   private validateIp({ ip }: HttpRequest): boolean {
-    const whitelist = env.whitelistIps?.split(',') ?? [];
-    const valid = whitelist.includes(ip!);
+    if (!env.checkIpAuthorization) return true
+    const valid = env.whitelistIps?.includes(ip!);
     if (!valid) throw new Error(`Ip not allowed: ${ip}`);
     return valid;
   }

@@ -44,7 +44,7 @@
 							"$ref": "#/components/schemas/CreateIngredientProductInput"
 						},
 						"type": "array",
-						"description": "Não é possível escolher um produto com a quantidade zero\r\nNão é possível escolher um ingrediente com a quantidade zero"
+						"description": "Não é possível escolher um produto com a quantidade zero\nNão é possível escolher um ingrediente com a quantidade zero"
 					},
 					"count": {
 						"type": "number",
@@ -75,53 +75,6 @@
 				},
 				"required": [
 					"orderProducts"
-				],
-				"type": "object"
-			},
-			"GenericType": {},
-			"FindPaymentOutput": {
-				"properties": {
-					"order": {
-						"$ref": "#/components/schemas/GenericType"
-					},
-					"expirationDate": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"pixCode": {
-						"type": "string"
-					},
-					"pixUrl": {
-						"type": "string"
-					},
-					"status": {
-						"type": "string"
-					},
-					"paymentMethod": {
-						"type": "string"
-					},
-					"totalPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"paymentId": {
-						"type": "string"
-					},
-					"id": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"order",
-					"expirationDate",
-					"pixCode",
-					"pixUrl",
-					"status",
-					"paymentMethod",
-					"totalPrice",
-					"paymentId",
-					"id"
 				],
 				"type": "object"
 			},
@@ -264,12 +217,6 @@
 					"createdAt": {
 						"type": "string"
 					},
-					"payments": {
-						"items": {
-							"$ref": "#/components/schemas/FindPaymentOutput"
-						},
-						"type": "array"
-					},
 					"status": {
 						"type": "string"
 					},
@@ -284,7 +231,6 @@
 				"required": [
 					"orderProducts",
 					"createdAt",
-					"payments",
 					"status",
 					"orderId",
 					"id"
@@ -375,7 +321,7 @@
 					},
 					"orderId": {
 						"type": "string",
-						"description": "Não é permitido alterar para \"Recebido\" se o status atual não for \"Recebido\", status padrão.\r\nNão é permitido alterar para \"Em Preparação\" se o status atual não for \"Recebido\" e o status de pagamento for Pendente\r\nNão é permitido alterar para \"Pronto\" se o status atual não for \"Em Preparação\"\r\nNão é permitido alterar para \"Finalizado\" se o status atual não for \"Pronto\""
+						"description": "Não é permitido alterar para \"Recebido\" se o status atual não for \"Recebido\", status padrão.\nNão é permitido alterar para \"Em Preparação\" se o status atual não for \"Recebido\" e o status de pagamento for Pendente\nNão é permitido alterar para \"Pronto\" se o status atual não for \"Em Preparação\"\nNão é permitido alterar para \"Finalizado\" se o status atual não for \"Pronto\""
 					}
 				},
 				"required": [
@@ -383,112 +329,6 @@
 					"orderId"
 				],
 				"type": "object"
-			},
-			"OrderHttp.UpdatePaymentStatusOutput": {
-				"properties": {
-					"paymentId": {
-						"type": "string"
-					},
-					"status": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"paymentId",
-					"status"
-				],
-				"type": "object"
-			},
-			"PaymentService.PaymentWebhookInput": {
-				"properties": {
-					"data": {
-						"properties": {
-							"id": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"id"
-						],
-						"type": "object"
-					},
-					"action": {
-						"type": "string"
-					},
-					"api_version": {
-						"type": "string"
-					},
-					"user_id": {
-						"type": "number",
-						"format": "double"
-					},
-					"date_created": {
-						"type": "string"
-					},
-					"type": {
-						"type": "string"
-					},
-					"live_mode": {
-						"type": "boolean"
-					},
-					"id": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"data",
-					"action",
-					"api_version",
-					"user_id",
-					"date_created",
-					"type",
-					"live_mode",
-					"id"
-				],
-				"type": "object"
-			},
-			"OrderHttp.UpdatePaymentStatusInput": {
-				"$ref": "#/components/schemas/PaymentService.PaymentWebhookInput"
-			},
-			"Register.InsertClientOutput": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"clientId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"clientId"
-				],
-				"type": "object"
-			},
-			"ClientHttp.CreateClientOutput": {
-				"$ref": "#/components/schemas/Register.InsertClientOutput"
-			},
-			"ClientHttp.CreateClientInput": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"cpf": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"cpf",
-					"email"
-				],
-				"type": "object"
-			},
-			"ClientHttp.GetClientOutput": {
-				"$ref": "#/components/schemas/Register.FindClientOutput"
 			},
 			"ProductOutput": {
 				"properties": {
@@ -546,7 +386,8 @@
 						"type": "string"
 					},
 					"id": {
-						"type": "string"
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
@@ -633,89 +474,44 @@
 			"OrderHttp.GetCategoriesOutput": {
 				"$ref": "#/components/schemas/Order.FindCategoriesOutput"
 			},
-			"OrderHttp.CreateCheckoutOutput": {
+			"Register.InsertClientOutput": {
 				"properties": {
-					"status": {
+					"name": {
 						"type": "string"
 					},
-					"paymentId": {
-						"type": "string"
-					},
-					"orderId": {
+					"clientId": {
 						"type": "string"
 					}
 				},
 				"required": [
-					"status",
-					"paymentId",
-					"orderId"
+					"name"
 				],
 				"type": "object"
 			},
-			"OrderHttp.CreateCheckoutInput": {
+			"ClientHttp.CreateClientOutput": {
+				"$ref": "#/components/schemas/Register.InsertClientOutput"
+			},
+			"ClientHttp.CreateClientInput": {
 				"properties": {
-					"paymentMethod": {
+					"name": {
 						"type": "string"
 					},
-					"orderId": {
-						"type": "string",
-						"description": "paymentMethod aceita somente 'PIX'"
+					"cpf": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"paymentMethod",
-					"orderId"
+					"name",
+					"cpf",
+					"email"
 				],
 				"type": "object"
 			},
-			"Order.FindPaymentOutput": {
-				"properties": {
-					"order": {
-						"$ref": "#/components/schemas/GenericType"
-					},
-					"expirationDate": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"pixCode": {
-						"type": "string"
-					},
-					"pixUrl": {
-						"type": "string"
-					},
-					"status": {
-						"type": "string"
-					},
-					"paymentMethod": {
-						"type": "string"
-					},
-					"totalPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"paymentId": {
-						"type": "string"
-					},
-					"id": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"order",
-					"expirationDate",
-					"pixCode",
-					"pixUrl",
-					"status",
-					"paymentMethod",
-					"totalPrice",
-					"paymentId",
-					"id"
-				],
-				"type": "object"
-			},
-			"OrderHttp.GetPaymentOutput": {
-				"$ref": "#/components/schemas/Order.FindPaymentOutput"
+			"ClientHttp.GetClientOutput": {
+				"$ref": "#/components/schemas/Register.FindClientOutput"
 			}
 		},
 		"securitySchemes": {
@@ -1008,16 +804,16 @@
 				"parameters": []
 			}
 		},
-		"/webhook": {
-			"post": {
-				"operationId": "UpdatePaymentStatus",
+		"/product": {
+			"get": {
+				"operationId": "FindProduct",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/OrderHttp.UpdatePaymentStatusOutput"
+									"$ref": "#/components/schemas/OrderHttp.GetProductOutput"
 								}
 							}
 						}
@@ -1026,22 +822,55 @@
 						"description": "No content"
 					}
 				},
-				"summary": "Rota para atualizar o status do pagamento",
+				"summary": "Rota para procurar um produto",
 				"tags": [
-					"Payment"
+					"Product"
 				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/OrderHttp.UpdatePaymentStatusInput"
-							}
+				"security": [
+					{
+						"apiKey": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "productId",
+						"required": true,
+						"schema": {
+							"type": "string"
 						}
 					}
-				}
+				]
+			}
+		},
+		"/categories": {
+			"get": {
+				"operationId": "FindProductsCategories",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OrderHttp.GetCategoriesOutput"
+								}
+							}
+						}
+					},
+					"204": {
+						"description": "No content"
+					}
+				},
+				"summary": "Rota para buscar categorias de produto",
+				"tags": [
+					"Product categories"
+				],
+				"security": [
+					{
+						"apiKey": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/client": {
@@ -1113,152 +942,6 @@
 					{
 						"in": "query",
 						"name": "cpf",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/product": {
-			"get": {
-				"operationId": "FindProduct",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/OrderHttp.GetProductOutput"
-								}
-							}
-						}
-					},
-					"204": {
-						"description": "No content"
-					}
-				},
-				"summary": "Rota para procurar um produto",
-				"tags": [
-					"Product"
-				],
-				"security": [
-					{
-						"apiKey": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "productId",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/categories": {
-			"get": {
-				"operationId": "FindProductsCategories",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/OrderHttp.GetCategoriesOutput"
-								}
-							}
-						}
-					},
-					"204": {
-						"description": "No content"
-					}
-				},
-				"summary": "Rota para buscar categorias de produto",
-				"tags": [
-					"Product categories"
-				],
-				"security": [
-					{
-						"apiKey": []
-					}
-				],
-				"parameters": []
-			}
-		},
-		"/checkout": {
-			"post": {
-				"operationId": "CreateOrder",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/OrderHttp.CreateCheckoutOutput"
-								}
-							}
-						}
-					},
-					"204": {
-						"description": "No content"
-					}
-				},
-				"summary": "Rota para criação do checkout",
-				"tags": [
-					"Checkout"
-				],
-				"security": [
-					{
-						"apiKey": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/OrderHttp.CreateCheckoutInput"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "FindOrder",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/OrderHttp.GetPaymentOutput"
-								}
-							}
-						}
-					},
-					"204": {
-						"description": "No content"
-					}
-				},
-				"summary": "Rota para obter um checkout",
-				"tags": [
-					"Checkout"
-				],
-				"security": [
-					{
-						"apiKey": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "paymentId",
 						"required": true,
 						"schema": {
 							"type": "string"

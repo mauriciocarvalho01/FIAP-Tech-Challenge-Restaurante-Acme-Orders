@@ -26,7 +26,7 @@ export namespace Register {
   export type GenericType<T = any> = T;
 
   export type InsertClientInput = {
-    clientId: string;
+    clientId?: string;
     name: string;
     cpf: string;
     email: string;
@@ -35,7 +35,7 @@ export namespace Register {
   export type InsertClientOutput =
     | undefined
     | {
-        clientId: string;
-        name?: string;
+        clientId?: string;
+        name: string;
       };
 }

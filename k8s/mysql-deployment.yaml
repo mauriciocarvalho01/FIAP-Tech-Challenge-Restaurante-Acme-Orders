@@ -24,7 +24,7 @@ spec:
             - name: MYSQL_PASSWORD
               value: developer0101
             - name: MYSQL_DATABASE
-              value: developer0101
+              value: restaurante_acme_pedidos
             - name: MYSQL_ALLOW_EMPTY_PASSWORD
               value: "false"
           resources:

@@ -5,8 +5,7 @@ import {
   OrderProductEntity,
   IngredientEntity,
   IngredientProductEntity,
-  CategoryEntity,
-  PaymentEntity,
+  CategoryEntity
 } from '@/infra/repos/mysql/entities';
 
 export const makeOrderRepo = (): OrderRepository => {
@@ -16,7 +15,6 @@ export const makeOrderRepo = (): OrderRepository => {
     OrderProductEntity,
     IngredientEntity,
     IngredientProductEntity,
-    CategoryEntity,
-    PaymentEntity
+    CategoryEntity
   );
 };

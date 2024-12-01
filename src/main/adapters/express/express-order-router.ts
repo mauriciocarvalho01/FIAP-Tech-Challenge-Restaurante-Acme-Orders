@@ -40,7 +40,7 @@ export const adaptExpressGetOrderRoute: OrderAdapter =
 export const adaptExpressCreateOrderRoute: OrderAdapter =
   (controller) => async (req, res) => {
     const { body } = req;
-    const { statusCode, data } = await controller.handleCreateOrder(body);
+    const { statusCode, data } = await controller.handleCreateOrder({ httpOrigin: true, ...body });
 
     makeResponseHandler(data, statusCode, res);
   };
@@ -48,7 +48,7 @@ export const adaptExpressCreateOrderRoute: OrderAdapter =
 export const adaptExpressUpdateOrderRoute: OrderAdapter =
   (controller) => async (req, res) => {
     const { body } = req;
-    const { statusCode, data } = await controller.handleUpdateOrder(body);
+    const { statusCode, data } = await controller.handleUpdateOrder({ httpOrigin: true, ...body });
 
     makeResponseHandler(data, statusCode, res);
   };
@@ -56,7 +56,7 @@ export const adaptExpressUpdateOrderRoute: OrderAdapter =
 export const adaptExpressUpdateOrderStatusRoute: OrderAdapter =
   (controller) => async (req, res) => {
     const { body } = req;
-    const { statusCode, data } = await controller.handleUpdateOrderStatus(body);
+    const { statusCode, data } = await controller.handleUpdateOrderStatus({ httpOrigin: true, ...body });
 
     makeResponseHandler(data, statusCode, res);
   };
@@ -65,6 +65,7 @@ export const adaptExpressDeleteOrderRoute: OrderAdapter =
   (controller) => async (req, res) => {
     const { query, locals } = req;
     const { statusCode, data } = await controller.handleDeleteOrder({
+      httpOrigin: true,
       ...locals,
       ...query,
     });
@@ -72,30 +73,3 @@ export const adaptExpressDeleteOrderRoute: OrderAdapter =
     makeResponseHandler(data, statusCode, res);
   };
 
-export const adaptExpressGetCheckoutRoute: OrderAdapter =
-  (controller) => async (req, res) => {
-    const { query, locals } = req;
-    const { statusCode, data } = await controller.handleGetCheckout({
-      ...locals,
-      ...query,
-    });
-
-    makeResponseHandler(data, statusCode, res);
-  };
-
-export const adaptExpressCreateCheckoutRoute: OrderAdapter =
-  (controller) => async (req, res) => {
-    const { body } = req;
-    const { statusCode, data } = await controller.handleCreateCheckout(body);
-
-    makeResponseHandler(data, statusCode, res);
-  };
-
-export const adaptExpressUpdatePaymentStatusRoute: OrderAdapter =
-  (controller) => async (req, res) => {
-    const { body } = req;
-    const { statusCode, data } =
-      await controller.handleUpdatePaymentStatus(body);
-
-    makeResponseHandler(data, statusCode, res);
-  };

@@ -11,8 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
   OrderProductEntity,
-  ClientEntity,
-  PaymentEntity,
+  ClientEntity
 } from '@/infra/repos/mysql/entities';
 import { IsEnum, MaxLength } from 'class-validator';
 
@@ -55,7 +54,4 @@ export class OrderEntity {
     cascade: true,
   })
   orderProducts?: OrderProductEntity[];
-
-  @OneToMany(() => PaymentEntity, (payment) => payment.order, { cascade: true })
-  payments?: PaymentEntity[];
 }

@@ -2,6 +2,7 @@ import { MySQLRepository, Not } from '@/infra/repos/mysql/repository';
 import { Order } from '@/domain/contracts/repos';
 import { EntityError } from '@/infra/errors';
 import { OrderStatus } from './entities';
+
 export class OrderRepository extends MySQLRepository implements Order {
   constructor(
     private readonly orderEntity: Order.GenericType,
@@ -9,8 +10,7 @@ export class OrderRepository extends MySQLRepository implements Order {
     private readonly orderProductEntity: Order.GenericType,
     private readonly ingredientEntity: Order.GenericType,
     private readonly ingredientProductEntity: Order.GenericType,
-    private readonly categoryEntity: Order.GenericType,
-    private readonly paymentEntity: Order.GenericType
+    private readonly categoryEntity: Order.GenericType
   ) {
     super();
   }
@@ -22,7 +22,6 @@ export class OrderRepository extends MySQLRepository implements Order {
   getIngredientProductEntity = () => new this.ingredientProductEntity();
   getIngredientEntity = () => new this.ingredientEntity();
   getCategoryEntity = () => new this.categoryEntity();
-  getPaymentEntity = () => new this.paymentEntity();
 
   async findOrders(): Promise<Order.FindOrderOutput[] | undefined> {
     try {
@@ -34,7 +33,7 @@ export class OrderRepository extends MySQLRepository implements Order {
         },
         relations: [
           'client', // Relacionamento com ClientEntity
-          'payments', // Relacionamento com PaymentEntity
+          // 'payments', // Relacionamento com PaymentEntity
           'orderProducts', // Relacionamento com OrderProductEntity
           'orderProducts.product', // Para obter os produtos associados através do pivot
           'orderProducts.product.category', // Relacionamento com CategoryEntity
@@ -88,13 +87,13 @@ export class OrderRepository extends MySQLRepository implements Order {
                   ),
                 })
               ),
-              payments: order.payments?.map((pay: Order.GenericType) => ({
-                id: pay.id,
-                paymentId: pay.paymentId,
-                totalPrice: parseFloat(pay.totalPrice),
-                paymentMethod: pay.paymentMethod,
-                status: pay.status,
-              })),
+              // payments: order.payments?.map((pay: Order.GenericType) => ({
+              //   id: pay.id,
+              //   paymentId: pay.paymentId,
+              //   totalPrice: parseFloat(pay.totalPrice),
+              //   paymentMethod: pay.paymentMethod,
+              //   status: pay.status,
+              // })),
             }));
         });
       }
@@ -110,10 +109,10 @@ export class OrderRepository extends MySQLRepository implements Order {
       const orderRepo = this.getRepository(this.orderEntity);
 
       const order = await orderRepo.findOne({
-        where: { orderId: orderId ?? '' },
+        where: { orderId: orderId  },
         relations: [
           'client', // Relacionamento com ClientEntity
-          'payments', // Relacionamento com PaymentEntity
+          // 'payments', // Relacionamento com PaymentEntity
           'orderProducts', // Relacionamento com OrderProductEntity
           'orderProducts.product', // Para obter os produtos associados através do pivot
           'orderProducts.product.category', // Relacionamento com CategoryEntity
@@ -156,13 +155,13 @@ export class OrderRepository extends MySQLRepository implements Order {
               })
             ),
           })),
-          payments: order.payments?.map((pay: Order.GenericType) => ({
-            id: pay.id,
-            paymentId: pay.paymentId,
-            totalPrice: parseFloat(pay.totalPrice),
-            paymentMethod: pay.paymentMethod,
-            status: pay.status,
-          })),
+          // payments: order.payments?.map((pay: Order.GenericType) => ({
+          //   id: pay.id,
+          //   paymentId: pay.paymentId,
+          //   totalPrice: parseFloat(pay.totalPrice),
+          //   paymentMethod: pay.paymentMethod,
+          //   status: pay.status,
+          // })),
         };
       }
     } catch (error: any) {
@@ -175,7 +174,6 @@ export class OrderRepository extends MySQLRepository implements Order {
   ): Promise<Order.InsertOrderOutput> {
     try {
       const orderRepo = this.getRepository(this.orderEntity);
-      console.log(orderData);
       const saveResult = await orderRepo.save(orderData);
 
       if (saveResult !== null) {
@@ -183,88 +181,6 @@ export class OrderRepository extends MySQLRepository implements Order {
           id: saveResult.id,
           status: saveResult.status,
           orderId: orderData.orderId,
-        };
-      }
-    } catch (error: any) {
-      throw new EntityError(error.message);
-    }
-  }
-
-  async savePayment(
-    paymentData: Order.InsertPaymentInput
-  ): Promise<Order.InsertPaymentOutput> {
-    try {
-      const paymentRepo = this.getRepository(this.paymentEntity);
-
-      const saveResult = await paymentRepo.save(paymentData);
-
-      if (saveResult !== null) {
-        return {
-          id: saveResult.id,
-          status: paymentData.status,
-          paymentId: paymentData.paymentId,
-          totalPrice: paymentData.totalPrice,
-        };
-      }
-    } catch (error: any) {
-      throw new EntityError(error.message);
-    }
-  }
-
-  async updatePaymentStatus(
-    paymentData: Order.UpdatePaymentStatusInput
-  ): Promise<Order.UpdatePaymentStatusOutput> {
-    try {
-      const paymentRepo = this.getRepository(this.paymentEntity);
-      const orderRepo = this.getRepository(this.orderEntity);
-
-      const payment = await paymentRepo.findOne({
-        where: { paymentId: paymentData.paymentId },
-        relations: ['order'],
-      });
-
-      if (!payment) throw new EntityError('Payment not found');
-
-      const paymentStatus = paymentData.status;
-      payment.status = paymentStatus;
-      payment.order.status =
-        paymentStatus === 'Cancelado' ? 'Finalizado' : payment.order.status;
-      await paymentRepo.save(payment);
-      await orderRepo.save(payment.order);
-
-      return {
-        paymentId: payment.paymentId,
-        status: payment.status,
-      };
-    } catch (error: any) {
-      throw new EntityError(error.message);
-    }
-  }
-
-  async findPayment({
-    paymentId,
-  }: Order.FindPaymentInput): Promise<Order.FindPaymentOutput> {
-    try {
-      const paymentRepo = this.getRepository(this.paymentEntity);
-
-      const paymentOrder = await paymentRepo.findOne({
-        where: { paymentId: paymentId ?? '' },
-        relations: [
-          'order', // Relacionamento com OrderEntit
-        ],
-      });
-
-      if (paymentOrder !== null) {
-        return {
-          id: paymentOrder.id,
-          paymentId: paymentOrder.paymentId,
-          status: paymentOrder.status,
-          totalPrice: parseFloat(paymentOrder.totalPrice),
-          paymentMethod: paymentOrder.paymentMethod,
-          pixUrl: paymentOrder.pixUrl,
-          pixCode: paymentOrder.pixCode,
-          expirationDate: paymentOrder.expirationDate,
-          order: paymentOrder.order,
         };
       }
     } catch (error: any) {
@@ -370,7 +286,7 @@ export class OrderRepository extends MySQLRepository implements Order {
       const productRepo = this.getRepository(this.productEntity);
 
       const product = await productRepo.findOne({
-        where: { productId: productId ?? '' },
+        where: { productId: productId },
         relations: ['category'],
       });
 
@@ -419,7 +335,7 @@ export class OrderRepository extends MySQLRepository implements Order {
       const ingredientRepo = this.getRepository(this.ingredientEntity);
 
       const ingredient = await ingredientRepo.findOne({
-        where: { ingredientId: ingredientId ?? '' },
+        where: { ingredientId: ingredientId },
       });
 
       if (ingredient !== null)

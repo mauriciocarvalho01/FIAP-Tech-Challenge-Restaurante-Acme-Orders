@@ -3,11 +3,10 @@ import {
   makeRegisterRepo,
 } from '@/main/factories/infra/repos/mysql';
 import {
-  makeOrderService,
-  makePaymentService,
+  makeOrderService
 } from '@/main/factories/domain/use-cases';
 import { OrderController } from '@/application/controllers';
-import { paymentGateway } from '@/main/factories/infra/gateways';
+import { makeMessageBroker } from '@/main/factories/infra/message-broker';
 import { makeValidator } from '@/main/factories/application/validation';
 
 export const makeOrderController = (): OrderController => {
@@ -16,7 +15,6 @@ export const makeOrderController = (): OrderController => {
     makeRegisterRepo(),
     makeOrderRepo(),
     makeOrderService(),
-    makePaymentService(),
-    paymentGateway()
+    makeMessageBroker()
   );
 };

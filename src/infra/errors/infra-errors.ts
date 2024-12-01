@@ -31,3 +31,13 @@ export class EntityError extends Error {
     logger.error(`[${this.name}] ${this.message}`);
   }
 }
+
+export class MessageBrokerError extends Error {
+  constructor(error: string) {
+    super(error);
+    this.name = 'MessageBrokerError';
+    logger.error(`[${this.name}] ${this.message}`);
+  }
+}
+
+

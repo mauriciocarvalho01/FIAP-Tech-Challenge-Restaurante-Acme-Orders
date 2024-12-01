@@ -1,8 +1,14 @@
 module.exports = {
+  collectCoverage: true,
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
     '!<rootDir>/src/main/**',
     '!<rootDir>/src/**/index.ts',
+    '!<rootDir>/src/infra/docs/**',
+    '!<rootDir>/src/infra/repos/mysql/migrations/*',
+    '!<rootDir>/src/infra/helpers/*',
+    '!<rootDir>/src/**/errors/*',
+    '!<rootDir>/src/infra/repos/mysql/entities/*'
   ],
   coverageDirectory: 'coverage',
   coverageProvider: 'babel',

@@ -1,7 +1,7 @@
+import { TokenHandler } from '@/application/helpers';
 import { OrderService } from '@/domain/contracts/use-cases/order-use-case';
 import { OrderServiceError } from '@/domain/errors';
 import { Order } from '@/domain/contracts/repos';
-import { TokenHandler } from '@/infra/gateways';
 import { OrderRepository } from '@/infra/repos/mysql';
 
 export class OrderManager implements OrderService {
@@ -81,9 +81,6 @@ export class OrderManager implements OrderService {
     if (newStatus === 'Finalizado' && order.status !== 'Pronto') {
       return false; // Não é permitido alterar para "Finalizado" se o status atual não for "Pronto"
     }
-    if (order.payments[0].status === 'Processando') {
-      return false; // Não é permitido alterar status quanto o pagamento estiver processando
-    }
     return true;
   }
 
@@ -114,7 +111,7 @@ export class OrderManager implements OrderService {
       ingredientProductData
     );
     if (ingredientProduct === undefined)
-      throw new Error('Cant insert product order');
+      throw new Error('Cant insert ingredient product');
     return ingredientProduct;
   }
 }

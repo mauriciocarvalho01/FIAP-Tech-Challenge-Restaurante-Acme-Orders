@@ -9,4 +9,4 @@ data:
   PORT: "4080"
   CHECK_IP_AUTHORIZATION: "false"
   WHITE_LIST_IPS: ""
-
+  MYSQL_DATABASE: restaurante_acme_pedidos

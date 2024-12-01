@@ -16,5 +16,4 @@ MySQLConnection.getInstance()
   })
   .catch((error) => {
     logger.error(`Mysql connection error: ${error.message} ${JSON.stringify(env.database.mysql)}`);
-    process.exit(1)
   });

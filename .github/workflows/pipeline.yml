@@ -170,10 +170,6 @@ jobs:
         run: |
           kubectl get namespace fiap || kubectl create namespace fiap
 
-      - name: Ensure Authorization Service Account Exists
-        run: |
-          kubectl apply -f k8s/metrics.yaml
-
       - name: Set Kubernetes context to the EKS cluster
         run: kubectl config use-context arn:aws:eks:${{ env.AWS_REGION }}:${{ env.AWS_ACCOUNT_ID }}:cluster/${{ env.AWS_EKS_CLUSTER_NAME }}
 

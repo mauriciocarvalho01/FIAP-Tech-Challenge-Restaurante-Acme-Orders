@@ -15,7 +15,7 @@ describe('ProductController', () => {
   describe('handleGetProduct', () => {
     it('should return a product successfully', async () => {
       const productMock = {
-        id: 1, // Alterado para string
+        id: 1,
         productId: 'P1',
         name: 'Product 1',
         description: 'Description of Product 1',
@@ -33,11 +33,13 @@ describe('ProductController', () => {
         },
       };
 
-
+    // Given/Arrange/Dado que
       mockOrderRepo.findProduct.mockResolvedValue(productMock);
 
+    // When/Act/Execute a ação
       const response = await sut.handleGetProduct({ productId: '1' });
 
+    // Then/Assert/Entao o resultado é
       expect(response).toEqual(ok(productMock));
     });
 

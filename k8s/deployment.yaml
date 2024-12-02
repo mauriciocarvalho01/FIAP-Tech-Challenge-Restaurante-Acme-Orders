@@ -3,14 +3,14 @@ kind: Deployment
 metadata:
   annotations:
     reloader.stakater.com/auto: "true"
-    secret.reloader.stakater.com/reload: fiap/restaurante-acme
+    secret.reloader.stakater.com/reload: fiap/restaurante-acme-pedidos
   namespace: fiap
-  name: restaurante-acme
+  name: restaurante-acme-pedidos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: restaurante-acme
+      app: restaurante-acme-pedidos
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -19,12 +19,12 @@ spec:
   template:
     metadata:
       labels:
-        app: restaurante-acme
+        app: restaurante-acme-pedidos
     spec:
       serviceAccountName: metrics-sa
       containers:
-        - name: restaurante-acme
-          image: developer0101/tech-challenge:latest
+        - name: restaurante-acme-pedidos
+          image: developer0101/restaurante-acme-pedidos:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 4080
@@ -44,7 +44,7 @@ spec:
             - secretRef:
                 name: restaurante-acme-secrets
             - configMapRef:
-                name: restaurante-acme-vars
+                name: restaurante-acme-pedidos-vars
           readinessProbe:
               httpGet:
                   path: /v1/api/healthcheck

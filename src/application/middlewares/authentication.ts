@@ -38,6 +38,7 @@ export class AuthenticationMiddleware implements Middleware {
   }: AuthorizationRequest): Promise<boolean> {
     const auth = this.tokenHandler.authorization();
     auth.token = authorization ?? '';
+    console.log(auth)
     const errors = await this.validator.validate(auth);
     if (errors.length === 0) return true;
     return false;

@@ -22,7 +22,7 @@
     "start:message-broker": "node -r dotenv/config dist/main/message-broker.js",
     "dev:message-broker": "ts-node-dev --respawn --transpile-only --clear -r dotenv/config --inspect=0.0.0.0:9229 src/main/message-broker",
     "start": "node -r dotenv/config dist/main",
-    "dev:server": "npm run docs && ts-node-dev --respawn --transpile-only --clear -r dotenv/config --inspect=0.0.0.0:9229 src/main/server",
+    "dev:server": "npm run docs && ts-node-dev --respawn --transpile-only --clear -r dotenv/config --inspect=0.0.0.0:9229 src/main",
     "clean": "rimraf dist",
     "build": "npm run clean && npm run docs && tsc -p tsconfig-build.json",
     "prepare": "husky install",

@@ -8,6 +8,6 @@ import { auth } from '@/main/middlewares';
 import { Router } from 'express';
 
 export default (router: Router): void => {
-  router.get('/product', auth, getProduct(makeProductController()));
-  router.get('/categories', auth, getCategories(makeProductController()));
+  router.get('/product',/*/*auth,*/getProduct(makeProductController()));
+  router.get('/categories', /*/*auth,*/ getCategories(makeProductController()));
 };

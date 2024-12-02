@@ -23,4 +23,5 @@ module.exports = {
   },
   clearMocks: true,
   setupFiles: ['dotenv/config'],
+  coverageReporters: ['json', 'lcov', 'text', 'clover'], // LCOV é necessário para o SonarQube
 };

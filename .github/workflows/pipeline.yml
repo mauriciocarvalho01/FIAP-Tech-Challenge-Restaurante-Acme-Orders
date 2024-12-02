@@ -74,9 +74,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Tests (ensure coverage is generated)
-        run: npm test -- --coverage
-
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v3
         env:

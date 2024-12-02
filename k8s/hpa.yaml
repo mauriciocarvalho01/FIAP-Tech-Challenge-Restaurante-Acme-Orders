@@ -1,13 +1,13 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: restaurante-acme-hpa
+  name: restaurante-acme-pedidos-hpa
   namespace: fiap
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: restaurante-acme
+    name: restaurante-acme-pedidos
   minReplicas: 1
   maxReplicas: 5
   metrics:

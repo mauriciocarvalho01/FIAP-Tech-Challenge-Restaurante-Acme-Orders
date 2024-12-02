@@ -31,6 +31,6 @@ COPY --from=ts-remover /usr/app ./
 RUN npm i --save module-alias
 
 # Use o script de entrada
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["npm", "start:server"]
 
 USER 1000

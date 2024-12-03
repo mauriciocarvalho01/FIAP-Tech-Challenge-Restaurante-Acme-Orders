@@ -114,4 +114,4 @@ kubectl apply -f k8s/hpa.yaml
 
 - [Docs Swagger](http://localhost/api-docs/)
 
-- [Video Explicação da Arquitetura](https://1drv.ms/v/s!AmX5yCf3Zx_Qpspkl-BZVLKVXtW25w?e=hgjDPb)
+- [Video Explicação da Arquitetura](https://1drv.ms/v/s!AmX5yCf3Zx_Qp6UIyDJs8dCk9VCdtw?e=ioqhWf)

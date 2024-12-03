@@ -82,7 +82,10 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.javascript.coverage.reportPaths=coverage/clover.xml
+            -Dsonar.test.exclusions=tests/**
+            -Dsonar.tests=tests/
+            -Dsonar.verbose=true
 
   build_and_push_ecr:
     name: Build and Push Docker Image to ECR
